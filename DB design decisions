@@ -1,0 +1,25 @@
+2 tables: User, Project
+
+Table user:
+UserID -> System created; SERIAL
+UserName -> User input; VARCHAR()
+(E-Mail) -> User input; VARCHAR()
+Password -> User input; VARCHAR()
+CVLink -> User input; VARCHAR()
+Skills-> User input; VARCHAR()
+Link1 -> User input; VARCHAR()
+Link2 -> User input; VARCHAR()
+Link3 -> User input; VARCHAR()
+Link4 -> User input; VARCHAR()
+
+Table Projects:
+ProjectID -> System created; SERIAL
+UserID -> System created; SERIAL
+Title -> User input; VARCHAR()
+Description -> User input; VARCHAR()
+Image1 -> User input; VARCHAR()
+Image2 -> User input; VARCHAR()
+Image3 -> User input; VARCHAR()
+Image4 -> User input; VARCHAR()
+Link -> User input; VARCHAR()
+
