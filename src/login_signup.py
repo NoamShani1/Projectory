@@ -11,12 +11,16 @@ USER_DB = 'userpass.json'
 if not os.path.exists(USER_DB):
     with open(USER_DB, 'w') as f:
         json.dump({}, f)  # Initialize with an empty JSON object
-
+        
 @app.route('/')
+def frontpage():
+    return render_template('frontpage.html')
+
+@app.route('/login')
 def login_page():
     return render_template('login.html')
 
-@app.route('/login', methods=['POST'])
+@app.route('/login_', methods=['POST'])
 def login():
     username = request.form.get('username')
     password = request.form.get('password')
@@ -38,8 +42,8 @@ def signup_page():
 @app.route('/register', methods=['POST'])
 def register():
     if request.method == 'POST':
-        username = request.form.set('username')
-        password = request.form.set('password')
+        username = request.form.get('username')
+        password = request.form.get('password')
 
         # Load users from the JSON file
         with open(USER_DB, 'r') as f:

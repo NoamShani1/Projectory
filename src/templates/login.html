@@ -4,18 +4,102 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Login</title>
+    <style>
+        /* General Page Styling */
+        body {
+            font-family: "Times New Roman", serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background-color: #fff;
+            margin: 0;
+            text-align: center;
+        }
+
+        /* Container for the Login Box */
+        .login-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 40px;
+            border: 2px solid black;
+            border-radius: 10px;
+            box-shadow: 4px 4px 0px black;
+            background-color: white;
+        }
+
+        /* Login Header */
+        h1 {
+            font-size: 36px;
+            font-weight: bold;
+            margin-bottom: 20px;
+        }
+
+        /* Form Styling */
+        form {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 15px;
+        }
+
+        label {
+            font-size: 18px;
+            font-weight: bold;
+        }
+
+        input {
+            width: 280px;
+            padding: 8px;
+            font-size: 16px;
+            border: 1px solid black;
+            text-align: left;
+        }
+
+        /* Button Styling */
+        button {
+            padding: 10px 20px;
+            font-size: 18px;
+            border: 1px solid black;
+            background: white;
+            cursor: pointer;
+            font-weight: bold;
+            margin-top: 10px;
+            transition: all 0.2s ease-in-out;
+        }
+
+        button:hover {
+            background: black;
+            color: white;
+        }
+
+        /* Signup Text */
+        .signup {
+            font-size: 16px;
+            margin-top: 15px;
+        }
+
+        .signup a {
+            text-decoration: none;
+            color: blue;
+            font-weight: bold;
+        }
+    </style>
 </head>
 <body>
-    <h1>Login</h1>
-    <form action="/auth/login" method="post">
-        <label for="username">Username:</label>
-        <input type="text" id="username" name="username" required>
-        <br><br>
-        <label for="password">Password:</label>
-        <input type="password" id="password" name="password" required>
-        <br><br>
-        <button type="submit">Login</button>
-    </form>
-    <p>Don't have an account? <a href="/signup">Sign up here</a>.</p>
+    <div class="login-container">
+        <h1>Login</h1>
+        <form action="/login" method="post">
+            <label for="username">Username:</label>
+            <input type="text" id="username" name="username" required>
+
+            <label for="password">Password:</label>
+            <input type="password" id="password" name="password" required>
+
+            <button type="submit">Login</button>
+        </form>
+        <p class="signup">Don't have an account? <a href="/signup">Sign up here</a>.</p>
+    </div>
 </body>
 </html>

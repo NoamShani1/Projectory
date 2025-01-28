@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Projectory</title>
+    <style>
+        body {
+            font-family: "Times New Roman", serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background-color: #fff;
+            margin: 0;
+            text-align: center;
+        }
+
+        .container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 20px;
+        }
+
+        h1 {
+            font-size: 36px;
+            font-weight: bold;
+        }
+
+        input {
+            width: 300px;
+            padding: 8px;
+            font-size: 16px;
+            border: 1px solid black;
+            text-align: left;
+        }
+
+        .auth-links {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            font-size: 18px;
+        }
+
+        .auth-links a {
+            text-decoration: none;
+            color: black;
+        }
+
+        .auth-links span {
+            font-size: 14px;
+            color: black;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>PROJECTORY</h1>
+        <input type="text" placeholder="Search...">
+        <div class="auth-links">
+            <a href="/login">Log in</a>
+            <span>or</span>
+            <a href="/signup">Sign up</a>
+        </div>
+    </div>
+</body>
+</html>
