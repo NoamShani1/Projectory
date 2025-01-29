@@ -20,13 +20,16 @@ def frontpage():
 def login_page():
     return render_template('login.html')
 
-@app.route('/login_', methods=['POST'])
+@app.route('/login_', methods=['GET', 'POST'])
 def login():
+    if request.method == 'GET':
+        return render_template('login.html')  # Show login form
+
     username = request.form.get('username')
     password = request.form.get('password')
 
     # Load users from the JSON file
-    with open(USER_DB, 'r') as f:
+    with open(USER_DB, 'r') as f:   
         users = json.load(f)
 
     # Authenticate user
@@ -61,6 +64,41 @@ def register():
 
         # Redirect to the login page
         return redirect(url_for('login_page'))
+    
+@app.route('/home_page')
+def home_page():
+    username = request.args.get('username')  # Retrieve username from query params
+    
+    # Load users from the JSON file
+    with open(USER_DB, 'r') as f:
+        users = json.load(f)
 
+    if username in users:
+        return render_template('home_page.html', username=username)
+    else:
+        return redirect(url_for('login_page'))
+    
+@app.route('/home', methods=['POST'])
+def home():
+    if request.method == 'POST':
+        username = request.form.get('username')
+
+        # Load users from the JSON file
+        with open(USER_DB, 'r') as f:
+            users = json.load(f)
+
+        # Ensure user exists in the database
+        if username in users:
+            user_data = users[username]
+
+            # Extract skills, links, and CV (default to empty lists if not set)
+            user_skills = user_data.get('skills', [])
+            user_links = user_data.get('links', [])
+            user_cv = user_data.get('cv', [])
+
+            return render_template('home_page.html', username=username, skills=user_skills, links=user_links, cv=user_cv)
+        
+      
+    
 if __name__ == '__main__':
     app.run(debug=True)
