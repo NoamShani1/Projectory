@@ -53,6 +53,28 @@
             color: black;
         }
     </style>
+    <input type="text" id="search-bar" placeholder="Search users..." oninput="searchUsers()">
+
+    <div id="search-results"></div>
+  <script>
+        function searchUser() {
+            let username = document.getElementById("username-search").value;
+            if (!username) {
+                document.getElementById("search-result").innerText = "Please enter a username";
+                return;
+            }
+            
+            fetch(`/search?username=${encodeURIComponent(username)}`)
+                .then(response => response.json())
+                .then(data => {
+                    document.getElementById("search-result").innerText = data.message;
+                })
+                .catch(error => {
+                    document.getElementById("search-result").innerText = "Error searching for user";
+                });
+        }
+    </script>
+    
 </head>
 <body>
     <div class="container">
