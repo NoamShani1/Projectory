@@ -1,33 +1,47 @@
 import sys
 import os
 import json
-from src import __init__
 from flask import Flask, jsonify, render_template, request
+from __init__ import create_app  # Import the function properly
 
-app = Flask(__name__)
+app = create_app()  # Call create_app() to initialize Flask
 
-# USER_DB = 'userpass.json'
+@app.route('/login')
+def login_page():
+    return render_template('login.html')
 
-# if not os.path.exists(USER_DB):
-#     with open(USER_DB, 'w') as f:
-#         json.dump({}, f)
 
+@app.route('/signup')
+def signup_page():
+    return render_template('signup.html')
+
+
+USER_DB = 'userpass.json'
+
+if not os.path.exists(USER_DB):
+    with open(USER_DB, 'w') as f:
+        json.dump({}, f)
+
+#authecation of user
+@app.route('/login', methods = ['POST'])
+def login():
+    username = request.form['username']
+    password = request.form['password']
+    with open(USER_DB, 'r') as f:
+        users = json.load(f)
+    if username in users and users[username] == password:
+        return render_template('home_page.html')
+    else:
+        return jsonify({'message': 'Invalid username or password'})
+    
+
+if __name__ == "__main__":
+    app.run(debug=True)
 # #Load user database
 # @app.route('/')
 # def login_page():
 #     return render_template('login.html')
 
-# #authecation of user
-# @app.route('/login', methods = ['POST'])
-# def login():
-#     username = request.form['username']
-#     password = request.form['password']
-#     with open(USER_DB, 'r') as f:
-#         users = json.load(f)
-#     if username in users and users[username] == password:
-#         return jsonify({'message': 'Login Successful!'})
-#     else:
-#         return jsonify({'message': 'Invalid username or password'})
     
 # #register user
 # @app.route('/register', methods = ['POST'])
@@ -61,7 +75,7 @@ app = Flask(__name__)
 # print("create_app successfully imported:", __init__)
 
 # Call the create_app function and run the application
-app = __init__()
+# app = __init__()
 
-if __name__ == "__main__":
-    app.run(debug=True)
+# if __name__ == "__main__":
+#     app.run(debug=True)

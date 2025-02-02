@@ -11,12 +11,14 @@
 
 #     return app
 from flask import Flask
+from flask import Blueprint, render_template
 
-app = Flask(__name__)
 
-@app.route('/')
-def home():
-    return "Hello, Flask!"
+def create_app():
+    app = Flask(__name__)
 
-if __name__ == '__main__':
-    app.run(debug=True)
+    @app.route('/')
+    def home():
+        return render_template('frontpage.html')
+
+    return app
