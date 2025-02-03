@@ -4,7 +4,9 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Projectory</title>
+
     <style>
+        /* Body setup with centered content and clean background */
         body {
             font-family: "Times New Roman", serif;
             display: flex;
@@ -16,18 +18,21 @@
             text-align: center;
         }
 
+        /* Main container to structure the page content vertically */
         .container {
             display: flex;
             flex-direction: column;
             align-items: center;
-            gap: 20px;
+            gap: 20px; /* Adds space between elements */
         }
 
+        /* Large, bold heading for the page title */
         h1 {
             font-size: 36px;
             font-weight: bold;
         }
 
+        /* Input field styling for user interaction */
         input {
             width: 300px;
             padding: 8px;
@@ -36,6 +41,7 @@
             text-align: left;
         }
 
+        /* Links section for login and signup options */
         .auth-links {
             display: flex;
             flex-direction: column;
@@ -43,6 +49,7 @@
             font-size: 18px;
         }
 
+        /* Styling for login/signup links */
         .auth-links a {
             text-decoration: none;
             color: black;
@@ -53,33 +60,50 @@
             color: black;
         }
     </style>
+
+    <!-- Search bar for filtering user results -->
     <input type="text" id="search-bar" placeholder="Search users..." oninput="searchUsers()">
 
+    <!-- Dynamic area to display search results -->
     <div id="search-results"></div>
-  <script>
+
+    <script>
+        /**
+         * Searches for a user by their username through an API call.
+         * Updates the search result section with feedback.
+         */
         function searchUser() {
             let username = document.getElementById("username-search").value;
             if (!username) {
                 document.getElementById("search-result").innerText = "Please enter a username";
                 return;
             }
-            
+
+            // Fetch user data from the server
             fetch(`/search?username=${encodeURIComponent(username)}`)
-                .then(response => response.json())
+                .then(response => response.json())  // Convert response to JSON
                 .then(data => {
+                    // Display the search result message
                     document.getElementById("search-result").innerText = data.message;
                 })
                 .catch(error => {
+                    // Handle errors and provide feedback to the user
                     document.getElementById("search-result").innerText = "Error searching for user";
                 });
         }
     </script>
-    
 </head>
+
 <body>
+    <!-- Main container to hold the page content -->
     <div class="container">
+        <!-- Page title -->
         <h1>PROJECTORY</h1>
+
+        <!-- Placeholder search input for user interaction -->
         <input type="text" placeholder="Search...">
+
+        <!-- Login and signup navigation links -->
         <div class="auth-links">
             <a href="/login">Log in</a>
             <span>or</span>
