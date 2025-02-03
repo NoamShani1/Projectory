@@ -2,6 +2,8 @@ import sys
 import os
 import json
 import logging
+import sqlite3
+import database
 from flask import Flask, jsonify, render_template, request
 from __init__ import create_app  # Import the function to initialize the Flask app
 from flask_sqlalchemy import SQLAlchemy
@@ -42,15 +44,15 @@ def signup_page():
     return render_template('signup.html')
 
 # Route to search for users based on a query parameter
-@app.route('/search', methods=['GET'])
-def search_users():
-    query = request.args.get('q', '')  # Get the search query from URL parameters
-    if query:
-        # Perform case-insensitive search for matching usernames
-        results = User.query.filter(User.username.ilike(f"%{query}%")).all()
-        # Return the search results as a JSON list
-        return jsonify([{'id': user.id, 'username': user.username} for user in results])
-    return jsonify([])  # Return an empty list if no query is provided
+# @app.route('/search', methods=['GET'])
+# def search_users():
+#     query = request.args.get('q', '')  # Get the search query from URL parameters
+#     if query:
+#         # Perform case-insensitive search for matching usernames
+#         results = User.query.filter(User.username.ilike(f"%{query}%")).all()
+#         # Return the search results as a JSON list
+#         return jsonify([{'id': user.id, 'username': user.username} for user in results])
+#     return jsonify([])  # Return an empty list if no query is provided
 
 # JSON-based file to store username-password mappings for basic authentication
 USER_DB = 'userpass.json'
@@ -73,6 +75,39 @@ def login():
         return render_template('home_page.html')  # Redirect to the home page if authenticated
     else:
         return jsonify({'message': 'Invalid username or password'})  # Return an error message if authentication fails
+
+@app.route('/search_user', methods=['GET'])
+def search_user():
+    username_query = request.args.get('username')
+    if not username_query:
+        return jsonify({"error": "Username is required"}), 400
+    
+    matching_users = search_users_in_db(username_query)
+    if matching_users:
+        return jsonify({"exists": True, "users": matching_users, "message": f"Found {len(matching_users)} users"})
+    return jsonify({"exists": False, "message": "No matching users found"})
+
+@app.route('/add_user', methods=['POST'])
+def add_user():
+    data = request.json
+    if not data or 'username' not in data:
+        return jsonify({"error": "Username is required"}), 400
+    
+    username = data['username']
+
+    try:
+        conn = sqlite3.connect(DB_FILE)
+        cursor = conn.cursor()
+        cursor.execute('INSERT INTO users (username) VALUES (?)', (username,))
+        conn.commit()
+        conn.close()
+
+        # Update the JSON file after adding the user
+        update_json_from_db()
+
+        return jsonify({"success": True, "message": f"User '{username}' added successfully"})
+    except sqlite3.IntegrityError:
+        return jsonify({"error": f"User '{username}' already exists"}), 409
 
 # Run the application if the script is executed directly
 if __name__ == "__main__":
