@@ -4,7 +4,7 @@ import json
 import logging
 import sqlite3
 import database
-from flask import Flask, jsonify, render_template, request
+from flask import Flask, jsonify, redirect, render_template, request, url_for
 from __init__ import create_app  # Import the function to initialize the Flask app
 from flask_sqlalchemy import SQLAlchemy
 
@@ -15,6 +15,14 @@ logging.basicConfig(level=logging.DEBUG)
 app = create_app()
 
 basedir = os.path.abspath(os.path.dirname(__file__))
+
+# Set up the database folder and file
+db_folder = os.path.join(os.path.abspath(os.path.dirname(__file__)), "database")
+if not os.path.exists(db_folder):
+    os.makedirs(db_folder)  # Create the database folder if it doesn't exist
+
+db_file = os.path.join(db_folder, "pass.db")
+
 # Configure the SQLite database connection
 app.config['SQLALCHEMY_DATABASE_URI'] = f'sqlite:///{os.path.join(basedir, "pass.db")}'
  # Using a local SQLite database
@@ -29,6 +37,8 @@ class User(db.Model):
     __tablename__ = 'users'
     id = db.Column(db.Integer, primary_key=True)  # Unique ID for each user
     username = db.Column(db.String(80), nullable=False)  # Username field (required)
+    first_name = db.Column(db.String(80), nullable=False)  # First Name
+    last_name = db.Column(db.String(80), nullable=False)  # Last Name
 
 # Automatically create tables before the first request if they don't exist
 @app.before_request
@@ -41,14 +51,18 @@ def initialize_users_from_json():
         with open(USER_DB, 'r') as file:
             try:
                 users = json.load(file)
-                for username in users.keys():
+                for username, details in users.items():
                     if not User.query.filter_by(username=username).first():
-                        new_user = User(username=username)
+                        new_user = User(
+                            username=username,
+                            first_name=details.get('first_name', 'Unknown'),
+                            last_name=details.get('last_name', 'Unknown'),
+                            password=details.get('password', 'Unknown')
+                        )
                         db.session.add(new_user)
                 db.session.commit()
             except json.JSONDecodeError:
                 logging.error("Failed to load users from JSON file.")
-                
                 
 # Route to render the login page
 @app.route('/login')
@@ -103,10 +117,13 @@ def search_user():
 @app.route('/add_user', methods=['POST'])
 def add_user():
     data = request.json
-    if not data or 'username' not in data:
-        return jsonify({"error": "Username is required"}), 400
+    if not data or 'username' not in data or 'first_name' not in data or 'last_name' not in data:
+        return jsonify({"error": "Username, First Name, and Last Name are required"}), 400
 
     username = data['username']
+    first_name = data['first_name']
+    last_name = data['last_name']
+    password = data['password']
 
     # Check if the user already exists
     existing_user = User.query.filter_by(username=username).first()
@@ -114,29 +131,57 @@ def add_user():
         return jsonify({"error": f"User with username '{username}' already exists"}), 409
 
     # Add the new user to the database
-    new_user = User(username=username)
+    new_user = User(username=username, first_name=first_name, last_name=last_name)
     db.session.add(new_user)
     db.session.commit()
 
-    # Update the JSON file with the new user and a default password (for simplicity)
-    update_json_file(username, "default_password")
+    # Update the JSON file with the new user and a default password
+    update_json_file(username, first_name, last_name, "default_password")
+
+    # Redirect to the new user's profile page
+    return redirect(url_for('profile_page', username=new_user.username))
+
+# Route to register a new user from the sign-up form
+@app.route('/register', methods=['POST'])
+def register_user():
+    # Get form data
+    first_name = request.form['first_name']
+    last_name = request.form['last_name']
+    username = request.form['username']
+    password = request.form['password']
+
+    # Check if the user already exists
+    existing_user = User.query.filter_by(username=username).first()
+    if existing_user:
+        return jsonify({"error": f"User with username '{username}' already exists"}), 409
+
+    # Add the new user to the database
+    new_user = User(username=username, first_name=first_name, last_name=last_name, password=password)
+    db.session.add(new_user)
+    db.session.commit()
+
+    # Update the JSON file with the new user details
+    update_json_file(username, first_name, last_name, password)
 
     # Redirect to the new user's profile page
     return redirect(url_for('profile_page', username=new_user.username))
 
 # Function to update the JSON file with new user-password pairs
-def update_json_file(username, password):
+def update_json_file(username, first_name, last_name, password):
     users = {}
     if os.path.exists(USER_DB):
         with open(USER_DB, 'r') as file:
             users = json.load(file)
 
     # Add or update the user in the JSON file
-    users[username] = password
+    users[username] = {
+        "first_name": first_name,
+        "last_name": last_name,
+        "password": password
+    }
+
     with open(USER_DB, 'w') as file:
         json.dump(users, file, indent=4)
-
-
 # Route to display the profile page for a specific user
 @app.route('/profile/<username>', methods=['GET'])
 def profile_page(username):
