@@ -41,6 +41,27 @@
             text-align: left;
         }
 
+        /* Search container styling for button alignment */
+        .search-container {
+            display: flex;
+            align-items: center;
+            gap: 10px; /* Adds space between the input and button */
+        }
+
+        /* Search button styling */
+        button {
+            padding: 8px 16px;
+            font-size: 16px;
+            border: 1px solid black;
+            background-color: #007BFF;
+            color: white;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background-color: #0056b3;
+        }
+
         /* Links section for login and signup options */
         .auth-links {
             display: flex;
@@ -61,21 +82,15 @@
         }
     </style>
 
-    <!-- Search bar for filtering user results -->
-    <input type="text" id="search-bar" placeholder="Search users..." oninput="searchUsers()">
-
-    <!-- Dynamic area to display search results -->
-    <div id="search-results"></div>
-
     <script>
         /**
          * Searches for a user by their username through an API call.
          * Updates the search result section with feedback.
          */
         function searchUser() {
-            let username = document.getElementById("username-search").value;
+            let username = document.getElementById("search-bar").value;
             if (!username) {
-                document.getElementById("search-result").innerText = "Please enter a username";
+                alert("Please enter a username");
                 return;
             }
 
@@ -84,11 +99,11 @@
                 .then(response => response.json())  // Convert response to JSON
                 .then(data => {
                     // Display the search result message
-                    document.getElementById("search-result").innerText = data.message;
+                    document.getElementById("search-results").innerText = data.message;
                 })
                 .catch(error => {
                     // Handle errors and provide feedback to the user
-                    document.getElementById("search-result").innerText = "Error searching for user";
+                    document.getElementById("search-results").innerText = "Error searching for user";
                 });
         }
     </script>
@@ -100,8 +115,14 @@
         <!-- Page title -->
         <h1>PROJECTORY</h1>
 
-        <!-- Placeholder search input for user interaction -->
-        <input type="text" placeholder="Search...">
+        <!-- Search input and button container -->
+        <div class="search-container">
+            <input type="text" id="search-bar" placeholder="Search users...">
+            <button onclick="searchUser()">Search</button>
+        </div>
+
+        <!-- Dynamic area to display search results -->
+        <div id="search-results" style="margin-top: 20px;"></div>
 
         <!-- Login and signup navigation links -->
         <div class="auth-links">

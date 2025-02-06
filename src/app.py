@@ -14,25 +14,42 @@ logging.basicConfig(level=logging.DEBUG)
 # Initialize the Flask app using the create_app() function
 app = create_app()
 
+basedir = os.path.abspath(os.path.dirname(__file__))
 # Configure the SQLite database connection
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///userpass.db'  # Using a local SQLite database
+app.config['SQLALCHEMY_DATABASE_URI'] = f'sqlite:///{os.path.join(basedir, "pass.db")}'
+ # Using a local SQLite database
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False  # Disable overhead of tracking modifications
-
 # Initialize SQLAlchemy for database management
 db = SQLAlchemy(app)
+# Intializing user json file 
+USER_DB = 'userpass.json'
 
 # Define the User model to represent the 'users' table in the database
 class User(db.Model):
     __tablename__ = 'users'
     id = db.Column(db.Integer, primary_key=True)  # Unique ID for each user
     username = db.Column(db.String(80), nullable=False)  # Username field (required)
-    email = db.Column(db.String(120), unique=True, nullable=False)  # Unique email address (required)
 
 # Automatically create tables before the first request if they don't exist
 @app.before_request
 def create_tables():
     db.create_all()
-
+    
+# Load users from the JSON file and insert them into the database (if needed)
+def initialize_users_from_json():
+    if os.path.exists(USER_DB):
+        with open(USER_DB, 'r') as file:
+            try:
+                users = json.load(file)
+                for username in users.keys():
+                    if not User.query.filter_by(username=username).first():
+                        new_user = User(username=username)
+                        db.session.add(new_user)
+                db.session.commit()
+            except json.JSONDecodeError:
+                logging.error("Failed to load users from JSON file.")
+                
+                
 # Route to render the login page
 @app.route('/login')
 def login_page():
@@ -43,19 +60,6 @@ def login_page():
 def signup_page():
     return render_template('signup.html')
 
-# Route to search for users based on a query parameter
-# @app.route('/search', methods=['GET'])
-# def search_users():
-#     query = request.args.get('q', '')  # Get the search query from URL parameters
-#     if query:
-#         # Perform case-insensitive search for matching usernames
-#         results = User.query.filter(User.username.ilike(f"%{query}%")).all()
-#         # Return the search results as a JSON list
-#         return jsonify([{'id': user.id, 'username': user.username} for user in results])
-#     return jsonify([])  # Return an empty list if no query is provided
-
-# JSON-based file to store username-password mappings for basic authentication
-USER_DB = 'userpass.json'
 
 # Create an empty JSON file if it doesn't already exist
 if not os.path.exists(USER_DB):
@@ -76,38 +80,73 @@ def login():
     else:
         return jsonify({'message': 'Invalid username or password'})  # Return an error message if authentication fails
 
+# Route to search for users by username (case-insensitive partial match)
 @app.route('/search_user', methods=['GET'])
 def search_user():
-    username_query = request.args.get('username')
+    username_query = request.args.get('username', '')
     if not username_query:
         return jsonify({"error": "Username is required"}), 400
-    
-    matching_users = search_users_in_db(username_query)
+
+    # Perform case-insensitive search using SQLAlchemy's ilike function
+    matching_users = User.query.filter(User.username.ilike(f"%{username_query}%")).all()
+
     if matching_users:
-        return jsonify({"exists": True, "users": matching_users, "message": f"Found {len(matching_users)} users"})
+        return jsonify({
+            "exists": True,
+            "users": [{"id": user.id, "username": user.username} for user in matching_users],
+            "message": f"Found {len(matching_users)} user(s)" #need to change this to showing list of user profile
+        })
     return jsonify({"exists": False, "message": "No matching users found"})
 
+
+# Route to add a new user and redirect to their profile page
 @app.route('/add_user', methods=['POST'])
 def add_user():
     data = request.json
     if not data or 'username' not in data:
         return jsonify({"error": "Username is required"}), 400
-    
+
     username = data['username']
 
-    try:
-        conn = sqlite3.connect(DB_FILE)
-        cursor = conn.cursor()
-        cursor.execute('INSERT INTO users (username) VALUES (?)', (username,))
-        conn.commit()
-        conn.close()
+    # Check if the user already exists
+    existing_user = User.query.filter_by(username=username).first()
+    if existing_user:
+        return jsonify({"error": f"User with username '{username}' already exists"}), 409
 
-        # Update the JSON file after adding the user
-        update_json_from_db()
+    # Add the new user to the database
+    new_user = User(username=username)
+    db.session.add(new_user)
+    db.session.commit()
 
-        return jsonify({"success": True, "message": f"User '{username}' added successfully"})
-    except sqlite3.IntegrityError:
-        return jsonify({"error": f"User '{username}' already exists"}), 409
+    # Update the JSON file with the new user and a default password (for simplicity)
+    update_json_file(username, "default_password")
+
+    # Redirect to the new user's profile page
+    return redirect(url_for('profile_page', username=new_user.username))
+
+# Function to update the JSON file with new user-password pairs
+def update_json_file(username, password):
+    users = {}
+    if os.path.exists(USER_DB):
+        with open(USER_DB, 'r') as file:
+            users = json.load(file)
+
+    # Add or update the user in the JSON file
+    users[username] = password
+    with open(USER_DB, 'w') as file:
+        json.dump(users, file, indent=4)
+
+
+# Route to display the profile page for a specific user
+@app.route('/profile/<username>', methods=['GET'])
+def profile_page(username):
+    user = User.query.filter_by(username=username).first()
+    if user:
+        return render_template('profile.html', user=user)
+    else:
+        return jsonify({"error": "User not found"}), 404
+
+
 
 # Run the application if the script is executed directly
 if __name__ == "__main__":
