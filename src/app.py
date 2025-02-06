@@ -39,6 +39,8 @@ class User(db.Model):
     username = db.Column(db.String(80), nullable=False)  # Username field (required)
     first_name = db.Column(db.String(80), nullable=False)  # First Name
     last_name = db.Column(db.String(80), nullable=False)  # Last Name
+    password = db.Column(db.String(80), nullable=False)  # Password (added)
+
 
 # Automatically create tables before the first request if they don't exist
 @app.before_request
@@ -85,14 +87,12 @@ if not os.path.exists(USER_DB):
 def login():
     username = request.form['username']  # Get the submitted username
     password = request.form['password']  # Get the submitted password
-    # Read existing user data from the JSON file
-    with open(USER_DB, 'r') as f:
-        users = json.load(f)
-    # Check if the provided username and password match the stored credentials
-    if username in users and users[username] == password:
-        return render_template('home_page.html')  # Redirect to the home page if authenticated
+   # Query the user from the database
+    user = User.query.filter_by(username=username).first()
+    if user and user.password == password:
+        return render_template('home_page.html')  # Redirect if password matches
     else:
-        return jsonify({'message': 'Invalid username or password'})  # Return an error message if authentication fails
+        return jsonify({'message': 'Invalid username or password'})  # Return error message
 
 # Route to search for users by username (case-insensitive partial match)
 @app.route('/search_user', methods=['GET'])
@@ -136,7 +136,7 @@ def add_user():
     db.session.commit()
 
     # Update the JSON file with the new user and a default password
-    update_json_file(username, first_name, last_name, "default_password")
+    update_json_file(username, first_name, last_name, password)
 
     # Redirect to the new user's profile page
     return redirect(url_for('profile_page', username=new_user.username))
