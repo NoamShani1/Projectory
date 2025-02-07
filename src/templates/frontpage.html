@@ -87,8 +87,8 @@
          * Searches for a user by their username through an API call.
          * Updates the search result section with feedback.
          */
-        function searchUser() {
-            let username = document.getElementById("search-bar").value;
+        {% comment %} function searchUser() {
+            {% comment %} let username = document.getElementById("search-bar").value;
             if (!username) {
                 alert("Please enter a username");
                 return;
@@ -104,7 +104,44 @@
                 .catch(error => {
                     // Handle errors and provide feedback to the user
                     document.getElementById("search-results").innerText = "Error searching for user";
-                });
+                }); {% endcomment %}
+
+            let username = document.getElementById("search-bar").value;
+            if (!username) {
+            alert("Please enter a username");
+            return; 
+            }
+
+            fetch(`/search_user?username=${encodeURIComponent(username)}`)
+                .then(response => response.json())  
+                .then(data => {
+                    let resultsDiv = document.getElementById("search-results");
+                    resultsDiv.innerHTML = ""; 
+
+                    if (data.exists) {
+                        data.users.forEach(user => {
+                            let userElement = document.createElement("p");
+                            userElement.innerText = user.username;
+                            resultsDiv.appendChild(userElement);
+                        });
+                    } else {
+                        resultsDiv.innerText = "No matching users found";
+                    }
+                })
+            .catch(error => {
+                document.getElementById("search-results").innerText = "Error searching for users";
+            }); {% endcomment %}
+
+            function redirectToSearch() {
+                let username = document.getElementById("search-bar").value;
+                if (!username) {
+                    alert("Please enter a username");
+                    return;
+                }
+        
+                // Redirect to search.html with the query parameter
+                window.location.href = `/search.html?username=${encodeURIComponent(username)}`;
+            }
         }
     </script>
 </head>
@@ -118,7 +155,7 @@
         <!-- Search input and button container -->
         <div class="search-container">
             <input type="text" id="search-bar" placeholder="Search users...">
-            <button onclick="searchUser()">Search</button>
+            <button onclick="redirectToSearch()">Search</button>
         </div>
 
         <!-- Dynamic area to display search results -->
