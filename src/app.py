@@ -3,10 +3,10 @@ import os
 import json
 import logging
 import sqlite3
-import database
 from flask import Flask, jsonify, redirect, render_template, request, url_for
 from __init__ import create_app  # Import the function to initialize the Flask app
-from flask_sqlalchemy import SQLAlchemy
+from flask_sqlalchemy import SQLAlchemy, ilike
+
 
 # Configure logging for debugging purposes
 logging.basicConfig(level=logging.DEBUG)
@@ -56,7 +56,7 @@ def initialize_users_from_json():
                 for username, details in users.items():
                     if not User.query.filter_by(username=username).first():
                         new_user = User(
-                            username=username,
+                            username=details.get('username', 'Unknown'),
                             first_name=details.get('first_name', 'Unknown'),
                             last_name=details.get('last_name', 'Unknown'),
                             password=details.get('password', 'Unknown')
@@ -75,6 +75,12 @@ def login_page():
 @app.route('/signup')
 def signup_page():
     return render_template('signup.html')
+
+# Route to render the search page
+@app.route('/search')
+def search_page():
+    return render_template('search.html')
+
 
 
 # Create an empty JSON file if it doesn't already exist
@@ -95,14 +101,32 @@ def login():
         return jsonify({'message': 'Invalid username or password'})  # Return error message
 
 # Route to search for users by username (case-insensitive partial match)
+# @app.route('/search_user', methods=['GET'])
+# def search_user():
+#     username_query = request.args.get('username', '')
+#     if not username_query:
+#         return jsonify({"error": "Username is required"}), 400
+
+#     # Perform case-insensitive search using SQLAlchemy's ilike function
+#     matching_users = User.query.filter(User.username.ilike(f"%{username_query}%")).all()
 @app.route('/search_user', methods=['GET'])
 def search_user():
     username_query = request.args.get('username', '')
+    
     if not username_query:
         return jsonify({"error": "Username is required"}), 400
 
-    # Perform case-insensitive search using SQLAlchemy's ilike function
+    # Perform case-insensitive substring search using ilike
     matching_users = User.query.filter(User.username.ilike(f"%{username_query}%")).all()
+
+    # if matching_users:
+    #     return jsonify({
+    #         "exists": True,
+    #         "users": [{"id": user.id, "username": user.username} for user in matching_users]
+    #     })
+    
+    # return jsonify({"exists": False, "message": "No matching users found"})
+
 
     if matching_users:
         return jsonify({
