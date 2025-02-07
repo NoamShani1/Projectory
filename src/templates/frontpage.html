@@ -1,8 +1,9 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Projectory</title>
 
     <style>
@@ -23,7 +24,8 @@
             display: flex;
             flex-direction: column;
             align-items: center;
-            gap: 20px; /* Adds space between elements */
+            gap: 20px;
+            /* Adds space between elements */
         }
 
         /* Large, bold heading for the page title */
@@ -45,7 +47,8 @@
         .search-container {
             display: flex;
             align-items: center;
-            gap: 10px; /* Adds space between the input and button */
+            gap: 10px;
+            /* Adds space between the input and button */
         }
 
         /* Search button styling */
@@ -53,7 +56,7 @@
             padding: 8px 16px;
             font-size: 16px;
             border: 1px solid black;
-            background-color: #007BFF;
+            background-color: #007bff;
             color: white;
             cursor: pointer;
         }
@@ -87,8 +90,8 @@
          * Searches for a user by their username through an API call.
          * Updates the search result section with feedback.
          */
-        {% comment %} function searchUser() {
-            {% comment %} let username = document.getElementById("search-bar").value;
+        {# comment #} function searchUser() {
+            let username = document.getElementById("search-bar").value;
             if (!username) {
                 alert("Please enter a username");
                 return;
@@ -104,19 +107,21 @@
                 .catch(error => {
                     // Handle errors and provide feedback to the user
                     document.getElementById("search-results").innerText = "Error searching for user";
-                }); {% endcomment %}
+                }); 
+                
+            {# endcomment #}
 
             let username = document.getElementById("search-bar").value;
             if (!username) {
-            alert("Please enter a username");
-            return; 
+                alert("Please enter a username");
+                return;
             }
 
             fetch(`/search_user?username=${encodeURIComponent(username)}`)
-                .then(response => response.json())  
+                .then(response => response.json())
                 .then(data => {
                     let resultsDiv = document.getElementById("search-results");
-                    resultsDiv.innerHTML = ""; 
+                    resultsDiv.innerHTML = "";
 
                     if (data.exists) {
                         data.users.forEach(user => {
@@ -128,9 +133,9 @@
                         resultsDiv.innerText = "No matching users found";
                     }
                 })
-            .catch(error => {
-                document.getElementById("search-results").innerText = "Error searching for users";
-            }); {% endcomment %}
+                .catch(error => {
+                    document.getElementById("search-results").innerText = "Error searching for users";
+                }); 
 
             function redirectToSearch() {
                 let username = document.getElementById("search-bar").value;
@@ -138,7 +143,7 @@
                     alert("Please enter a username");
                     return;
                 }
-        
+
                 // Redirect to search.html with the query parameter
                 window.location.href = `/search.html?username=${encodeURIComponent(username)}`;
             }
@@ -154,12 +159,12 @@
 
         <!-- Search input and button container -->
         <div class="search-container">
-            <input type="text" id="search-bar" placeholder="Search users...">
+            <input type="text" id="search-bar" placeholder="Search users..." />
             <button onclick="redirectToSearch()">Search</button>
         </div>
 
         <!-- Dynamic area to display search results -->
-        <div id="search-results" style="margin-top: 20px;"></div>
+        <div id="search-results" style="margin-top: 20px"></div>
 
         <!-- Login and signup navigation links -->
         <div class="auth-links">
@@ -169,4 +174,5 @@
         </div>
     </div>
 </body>
+
 </html>

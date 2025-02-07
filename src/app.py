@@ -5,8 +5,8 @@ import logging
 import sqlite3
 from flask import Flask, jsonify, redirect, render_template, request, url_for
 from __init__ import create_app  # Import the function to initialize the Flask app
-from flask_sqlalchemy import SQLAlchemy, ilike
-
+from flask_sqlalchemy import SQLAlchemy
+from sqlalchemy import func
 
 # Configure logging for debugging purposes
 logging.basicConfig(level=logging.DEBUG)
@@ -111,13 +111,15 @@ def login():
 #     matching_users = User.query.filter(User.username.ilike(f"%{username_query}%")).all()
 @app.route('/search_user', methods=['GET'])
 def search_user():
-    username_query = request.args.get('username', '')
+    username_query = request.args.get('username', '').strip()
     
     if not username_query:
         return jsonify({"error": "Username is required"}), 400
 
     # Perform case-insensitive substring search using ilike
-    matching_users = User.query.filter(User.username.ilike(f"%{username_query}%")).all()
+    #matching_users = User.query.filter(User.username.ilike(f"%{username_query}%")).all()
+    matching_users = User.query.filter(func.lower(User.username).like(f"%{username_query.lower()}%")).all()
+    
 
     # if matching_users:
     #     return jsonify({

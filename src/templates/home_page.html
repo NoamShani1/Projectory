@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
+
+<head>
     <!-- Meta tags for character encoding and responsive design -->
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -8,143 +9,144 @@
 
     <!-- CSS to style the page layout and components -->
     <style>
-      /* Centering the entire content and applying default styling */
-      body {
-        font-family: serif;
-        margin: 0;
-        padding: 0;
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        justify-content: center;
-        height: 100vh;
-        text-align: center;
-      }
+        /* Centering the entire content and applying default styling */
+        body {
+            font-family: serif;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            text-align: center;
+        }
 
-      /* Header containing logo and user info */
-      .header {
-        display: flex;
-        justify-content: space-between;
-        width: 90%;
-        padding: 20px;
-      }
+        /* Header containing logo and user info */
+        .header {
+            display: flex;
+            justify-content: space-between;
+            width: 90%;
+            padding: 20px;
+        }
 
-      .logo {
-        font-size: 24px;
-        font-weight: bold;
-      }
+        .logo {
+            font-size: 24px;
+            font-weight: bold;
+        }
 
-      .user-section {
-        display: flex;
-        align-items: center;
-      }
+        .user-section {
+            display: flex;
+            align-items: center;
+        }
 
-      .profile-pic {
-        width: 40px;
-        height: 40px;
-        border-radius: 50%;
-        background: lightgray;
-        margin-left: 10px;
-      }
+        .profile-pic {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: lightgray;
+            margin-left: 10px;
+        }
 
-      /* Content layout and spacing */
-      .content {
-        display: flex;
-        width: 80%;
-        justify-content: space-between;
-        margin-top: 50px;
-      }
+        /* Content layout and spacing */
+        .content {
+            display: flex;
+            width: 80%;
+            justify-content: space-between;
+            margin-top: 50px;
+        }
 
-      .sidebar {
-        text-align: left;
-      }
+        .sidebar {
+            text-align: left;
+        }
 
-      .image-box {
-        width: 400px;
-        height: 250px;
-        background: lightgray;
-        margin: auto;
-      }
+        .image-box {
+            width: 400px;
+            height: 250px;
+            background: lightgray;
+            margin: auto;
+        }
 
-      .actions {
-        margin-top: 20px;
-        text-align: left;
-      }
+        .actions {
+            margin-top: 20px;
+            text-align: left;
+        }
 
-      /* Style for links inside the action section */
-      .actions a {
-        text-decoration: none;
-        color: black;
-      }
+        /* Style for links inside the action section */
+        .actions a {
+            text-decoration: none;
+            color: black;
+        }
 
-      /* Dropdown menu styling */
-      .dropdown {
-        cursor: pointer;
-        margin: 10px 0;
-      }
+        /* Dropdown menu styling */
+        .dropdown {
+            cursor: pointer;
+            margin: 10px 0;
+        }
 
-      .dropdown-content {
-        display: none;
-        margin-left: 20px;
-      }
+        .dropdown-content {
+            display: none;
+            margin-left: 20px;
+        }
     </style>
 
     <script>
-      // Arrays to store user information dynamically
-      let userCV = [];
-      let userSkills = [];
-      let userLinks = [];
+        // Arrays to store user information dynamically
+        let userCV = [];
+        let userSkills = [];
+        let userLinks = [];
 
-      // Toggles visibility of dropdown content when clicked
-      function toggleDropdown(id) {
-        var content = document.getElementById(id);
-        content.style.display =
-          content.style.display === "block" ? "none" : "block";
-      }
+        // Toggles visibility of dropdown content when clicked
+        function toggleDropdown(id) {
+            var content = document.getElementById(id);
+            content.style.display =
+                content.style.display === "block" ? "none" : "block";
+        }
 
-      // Populates the dropdowns with current user information
-      function populateDropdowns() {
-        document.getElementById("cv").innerHTML = userCV
-          .map((item) => `<p>${item}</p>`)
-          .join("");
-        document.getElementById("skills").innerHTML = userSkills
-          .map((item) => `<p>${item}</p>`)
-          .join("");
-        document.getElementById("links").innerHTML = userLinks
-          .map((item) => `<p>${item}</p>`)
-          .join("");
-      }
+        // Populates the dropdowns with current user information
+        function populateDropdowns() {
+            document.getElementById("cv").innerHTML = userCV
+                .map((item) => `<p>${item}</p>`)
+                .join("");
+            document.getElementById("skills").innerHTML = userSkills
+                .map((item) => `<p>${item}</p>`)
+                .join("");
+            document.getElementById("links").innerHTML = userLinks
+                .map((item) => `<p>${item}</p>`)
+                .join("");
+        }
 
-      // Adds a skill to the list and updates the dropdown
-      function addSkill(skill) {
-        userSkills.push(skill);
-        populateDropdowns();
-      }
+        // Adds a skill to the list and updates the dropdown
+        function addSkill(skill) {
+            userSkills.push(skill);
+            populateDropdowns();
+        }
 
-      // Adds a link to the list and updates the dropdown
-      function addLink(link) {
-        userLinks.push(link);
-        populateDropdowns();
-      }
+        // Adds a link to the list and updates the dropdown
+        function addLink(link) {
+            userLinks.push(link);
+            populateDropdowns();
+        }
 
-      // Adds a CV format to the list and updates the dropdown
-      function addCV(format) {
-        userCV.push(format);
-        populateDropdowns();
-      }
+        // Adds a CV format to the list and updates the dropdown
+        function addCV(format) {
+            userCV.push(format);
+            populateDropdowns();
+        }
 
-      // Automatically populate dropdowns when the page is loaded
-      window.onload = populateDropdowns;
+        // Automatically populate dropdowns when the page is loaded
+        window.onload = populateDropdowns;
     </script>
-  </head>
-  <body>
+</head>
+
+<body>
     <!-- Header section with logo and user information -->
     <div class="header">
-      <div class="logo">PROJECTORY</div>
-      <div class="user-section">
-        <div class="username">USERNAME</div>
-        <div class="profile-pic"></div>
-      </div>
+        <div class="logo">PROJECTORY</div>
+        <div class="user-section">
+            <div class="username">USERNAME</div>
+            <div class="profile-pic"></div>
+        </div>
     </div>
 
     <!-- Form placeholder (future extension for user input) -->
@@ -152,47 +154,48 @@
 
     <!-- Dropdown sections for displaying skills, links, and CV information -->
     <div>
-      <p class="dropdown" onclick="toggleDropdown('skills')">Skills</p>
-      <div id="skills" class="dropdown-content">
-        <!-- Displaying user skills dynamically with template logic -->
-        {% if skills %}
-          {% for skill in skills %}
+        <p class="dropdown" onclick="toggleDropdown('skills')">Skills</p>
+        <div id="skills" class="dropdown-content">
+            <!-- Displaying user skills dynamically with template logic -->
+            {% if skills %}
+            {% for skill in skills %}
             <p>{{ skill }}</p>
-          {% endfor %}
-        {% else %}
-          <p>No skills added yet.</p>
-        {% endif %}
-      </div>
+            {% endfor %}
+            {% else %}
+            <p>No skills added yet.</p>
+            {% endif %}
+        </div>
 
-      <p class="dropdown" onclick="toggleDropdown('links')">Links</p>
-      <div id="links" class="dropdown-content">
-        <!-- Displaying user links dynamically with template logic -->
-        {% if links %}
-          {% for link in links %}
+        <p class="dropdown" onclick="toggleDropdown('links')">Links</p>
+        <div id="links" class="dropdown-content">
+            <!-- Displaying user links dynamically with template logic -->
+            {% if links %}
+            {% for link in links %}
             <p><a href="{{ link }}" target="_blank">{{ link }}</a></p>
-          {% endfor %}
-        {% else %}
-          <p>No links added yet.</p>
-        {% endif %}
-      </div>
+            {% endfor %}
+            {% else %}
+            <p>No links added yet.</p>
+            {% endif %}
+        </div>
 
-      <p class="dropdown" onclick="toggleDropdown('cv')">CV</p>
-      <div id="cv" class="dropdown-content">
-        <!-- Displaying user CV items dynamically with template logic -->
-        {% if cv %}
-          {% for item in cv %}
+        <p class="dropdown" onclick="toggleDropdown('cv')">CV</p>
+        <div id="cv" class="dropdown-content">
+            <!-- Displaying user CV items dynamically with template logic -->
+            {% if cv %}
+            {% for item in cv %}
             <p>{{ item }}</p>
-          {% endfor %}
-        {% else %}
-          <p>No CV uploaded yet.</p>
-        {% endif %}
-      </div>
+            {% endfor %}
+            {% else %}
+            <p>No CV uploaded yet.</p>
+            {% endif %}
+        </div>
     </div>
 
     <!-- Actions section for adding projects or editing profile -->
     <div class="actions">
-      <p><a href="#">Add Project +</a></p>
-      <p><a href="#">Edit Profile +</a></p>
+        <p><a href="#">Add Project +</a></p>
+        <p><a href="#">Edit Profile +</a></p>
     </div>
-  </body>
+</body>
+
 </html>
