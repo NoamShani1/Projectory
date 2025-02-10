@@ -4,9 +4,14 @@ import json
 import logging
 import sqlite3
 from flask import Flask, jsonify, redirect, render_template, request, url_for
-from __init__ import create_app  # Import the function to initialize the Flask app
+from __init__ import create_app
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy import func
+from werkzeug.utils import secure_filename
+from flask_migrate import Migrate
+
+
+
 
 # Configure logging for debugging purposes
 logging.basicConfig(level=logging.DEBUG)
@@ -23,6 +28,21 @@ if not os.path.exists(db_folder):
 
 db_file = os.path.join(db_folder, "pass.db")
 
+
+# Source: ChatGPT
+# Prompt: Give me a route to handle 
+# and save CV uploads in my app.py
+# Directory to save uploaded CVs
+UPLOAD_FOLDER = 'static/uploads'
+ALLOWED_EXTENSIONS = {'pdf'}
+
+app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
+os.makedirs(UPLOAD_FOLDER, exist_ok=True)  # Ensure the directory exists
+
+def allowed_file(filename):
+    return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
+
+
 # Configure the SQLite database connection
 app.config['SQLALCHEMY_DATABASE_URI'] = f'sqlite:///{os.path.join(basedir, "pass.db")}'
  # Using a local SQLite database
@@ -32,14 +52,20 @@ db = SQLAlchemy(app)
 # Intializing user json file 
 USER_DB = 'userpass.json'
 
+# Initialize Flask-Migrate
+migrate = Migrate(app, db)
+
 # Define the User model to represent the 'users' table in the database
 class User(db.Model):
     __tablename__ = 'users'
-    id = db.Column(db.Integer, primary_key=True)  # Unique ID for each user
-    username = db.Column(db.String(80), nullable=False)  # Username field (required)
-    first_name = db.Column(db.String(80), nullable=False)  # First Name
-    last_name = db.Column(db.String(80), nullable=False)  # Last Name
-    password = db.Column(db.String(80), nullable=False)  # Password (added)
+    id = db.Column(db.Integer, primary_key=True)
+    username = db.Column(db.String(80), nullable=False)
+    first_name = db.Column(db.String(80), nullable=False)
+    last_name = db.Column(db.String(80), nullable=False)
+    password = db.Column(db.String(80), nullable=False)
+    skills = db.Column(db.PickleType, default=list)  # Ensure it defaults to an empty list
+    links = db.Column(db.PickleType, default=list)
+    cv_path = db.Column(db.String(200), nullable=True)
 
 
 # Automatically create tables before the first request if they don't exist
@@ -86,7 +112,13 @@ def signup_page():
 def search_page():
     return render_template('search.html')
 
-
+@app.route('/editprofile/<username>', methods=['GET'])
+def edit_profile(username):
+    user = User.query.filter_by(username=username).first()
+    #if user:
+    return render_template('editprofile.html', user=user)
+    #else:
+        #return jsonify({"error": "User not found"}), 404
 
 # Create an empty JSON file if it doesn't already exist
 if not os.path.exists(USER_DB):
@@ -241,7 +273,52 @@ def profile_page(username):
     else:
         return jsonify({"error": "User not found"}), 404
 
+# source: ChatGPT, prompt: give me routing to save and handle the upload of skills
+# and CV upload 
+# Route to save updated profile data
+@app.route('/save_profile/<username>', methods=['POST'])
+def save_profile(username):
+    user = User.query.filter_by(username=username).first()
+    if not user:
+        return jsonify({"error": "User not found"}), 404
 
+    # Save skills
+    skills = request.form.getlist('skills[]')
+    user.skills = skills  # Assuming user.skills is a list or can be processed appropriately
+
+    # Save links
+    links = request.form.getlist('links[]')
+    user.links = links  # Assuming user.links can store this information
+
+    # Save updated user information
+    db.session.commit()
+
+    # Redirect to the updated profile
+    return redirect(url_for('profile_page', username=username))
+
+# Route to handle the CV upload
+@app.route('/upload_cv', methods=['POST'])
+def upload_cv():
+    if 'cv' not in request.files:
+        return jsonify({"error": "No file part"}), 400
+
+    file = request.files['cv']
+
+    if file.filename == '':
+        return jsonify({"error": "No selected file"}), 400
+
+    if file and allowed_file(file.filename):
+        filename = secure_filename(file.filename)
+        save_path = os.path.join(app.config['UPLOAD_FOLDER'], filename)
+        file.save(save_path)
+
+        # Optionally, save the path to the database (if needed)
+        # user.cv_path = save_path
+        # db.session.commit()
+
+        return redirect(url_for('profile_page', username=request.form['username']))
+    else:
+        return jsonify({"error": "Invalid file format. Only PDF files are allowed."}), 400
 
 # Run the application if the script is executed directly
 if __name__ == "__main__":
