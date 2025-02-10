@@ -98,22 +98,16 @@ if not os.path.exists(USER_DB):
 def login():
     username = request.form['username']  # Get the submitted username
     password = request.form['password']  # Get the submitted password
-   # Query the user from the database
+    
+    # Query the user from the database
     user = User.query.filter_by(username=username).first()
+    
     if user and user.password == password:
-        return render_template('home_page.html')  # Redirect if password matches
+        # Redirect to the specific user's profile page
+        return redirect(url_for('profile_page', username=user.username))
     else:
         return jsonify({'message': 'Invalid username or password'})  # Return error message
 
-# Route to search for users by username (case-insensitive partial match)
-# @app.route('/search_user', methods=['GET'])
-# def search_user():
-#     username_query = request.args.get('username', '')
-#     if not username_query:
-#         return jsonify({"error": "Username is required"}), 400
-
-#     # Perform case-insensitive search using SQLAlchemy's ilike function
-#     matching_users = User.query.filter(User.username.ilike(f"%{username_query}%")).all()
 @app.route('/search_user', methods=['GET'])
 def search_user():
     username_query = request.args.get('username', '').strip()
