@@ -1,4 +1,8 @@
-{
-    "noam123": "test123",
-    "user1": "password1"
-}
+[
+    {
+        "username": "user0",
+        "first_name": "user0",
+        "last_name": "one",
+        "password": "1234"
+    }
+]

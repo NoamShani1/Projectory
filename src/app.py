@@ -46,25 +46,30 @@ class User(db.Model):
 @app.before_request
 def create_tables():
     db.create_all()
+    initialize_users_from_json()  # Load users from JSON into the database
     
 # Load users from the JSON file and insert them into the database (if needed)
 def initialize_users_from_json():
     if os.path.exists(USER_DB):
         with open(USER_DB, 'r') as file:
             try:
-                users = json.load(file)
-                for username, details in users.items():
-                    if not User.query.filter_by(username=username).first():
-                        new_user = User(
-                            username=details.get('username', 'Unknown'),
-                            first_name=details.get('first_name', 'Unknown'),
-                            last_name=details.get('last_name', 'Unknown'),
-                            password=details.get('password', 'Unknown')
-                        )
-                        db.session.add(new_user)
+                users = json.load(file)  # Load JSON as a list of dictionaries
+                for details in users:
+                    if isinstance(details, dict):  # Ensure details is a dictionary
+                        username = details.get('username', 'Unknown')  # Extract username
+                        if not User.query.filter_by(username=username).first():
+                            new_user = User(
+                                username=username,
+                                first_name=details.get('first_name', 'Unknown'),
+                                last_name=details.get('last_name', 'Unknown'),
+                                password=details.get('password', 'Unknown')
+                            )
+                            db.session.add(new_user)
                 db.session.commit()
             except json.JSONDecodeError:
                 logging.error("Failed to load users from JSON file.")
+            except Exception as e:
+                logging.error(f"Unexpected error: {e}")
                 
 # Route to render the login page
 @app.route('/login')
@@ -120,16 +125,6 @@ def search_user():
     #matching_users = User.query.filter(User.username.ilike(f"%{username_query}%")).all()
     matching_users = User.query.filter(func.lower(User.username).like(f"%{username_query.lower()}%")).all()
     
-
-    # if matching_users:
-    #     return jsonify({
-    #         "exists": True,
-    #         "users": [{"id": user.id, "username": user.username} for user in matching_users]
-    #     })
-    
-    # return jsonify({"exists": False, "message": "No matching users found"})
-
-
     if matching_users:
         return jsonify({
             "exists": True,
@@ -142,9 +137,10 @@ def search_user():
 # Route to add a new user and redirect to their profile page
 @app.route('/add_user', methods=['POST'])
 def add_user():
-    data = request.json
-    if not data or 'username' not in data or 'first_name' not in data or 'last_name' not in data:
-        return jsonify({"error": "Username, First Name, and Last Name are required"}), 400
+    data = request.get_json()
+    if not data or 'username' not in data or 'first_name' not in data:
+            return jsonify({"error": "Username, First Name, and Last Name are required"}), 400
+
 
     username = data['username']
     first_name = data['first_name']
@@ -178,11 +174,13 @@ def register_user():
 
     # Check if the user already exists
     existing_user = User.query.filter_by(username=username).first()
+    print("existing user check: ",existing_user)
     if existing_user:
         return jsonify({"error": f"User with username '{username}' already exists"}), 409
 
     # Add the new user to the database
     new_user = User(username=username, first_name=first_name, last_name=last_name, password=password)
+    print("new user: ",new_user)
     db.session.add(new_user)
     db.session.commit()
 
@@ -192,22 +190,54 @@ def register_user():
     # Redirect to the new user's profile page
     return redirect(url_for('profile_page', username=new_user.username))
 
-# Function to update the JSON file with new user-password pairs
 def update_json_file(username, first_name, last_name, password):
-    users = {}
+    users = []
+
+    # Load existing users from JSON if the file exists
     if os.path.exists(USER_DB):
         with open(USER_DB, 'r') as file:
-            users = json.load(file)
+            try:
+                data = json.load(file)
+                
+                # If the data is a dictionary, convert it to a list of dictionaries
+                if isinstance(data, dict):
+                    logging.warning("Converting dictionary to list of users.")
+                    # Convert each key-value pair to a list of dictionaries
+                    users = [{"username": v.get("username", ""),
+                              "first_name": v.get("first_name", ""),
+                              "last_name": v.get("last_name", ""),
+                              "password": v.get("password", "")} 
+                             for k, v in data.items()]
+                elif isinstance(data, list):
+                    users = data  # Data is already in the correct format
+                else:
+                    logging.warning("Unknown JSON structure. Reinitializing to empty list.")
+                    users = []
 
-    # Add or update the user in the JSON file
-    users[username] = {
-        "first_name": first_name,
-        "last_name": last_name,
-        "password": password
-    }
+            except json.JSONDecodeError:
+                logging.error("Failed to load JSON file, initializing an empty list.")
+                users = []
 
+    # Check if the user already exists and update their details
+    for user in users:
+        if user.get("username") == username:
+            user["first_name"] = first_name
+            user["last_name"] = last_name
+            user["password"] = password
+            break
+    else:
+        # If the user does not exist, add them as a new entry
+        users.append({
+            "username": username,
+            "first_name": first_name,
+            "last_name": last_name,
+            "password": password
+        })
+
+    # Save the updated list back to the JSON file
     with open(USER_DB, 'w') as file:
         json.dump(users, file, indent=4)
+
 # Route to display the profile page for a specific user
 @app.route('/profile/<username>', methods=['GET'])
 def profile_page(username):

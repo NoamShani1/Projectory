@@ -90,26 +90,26 @@
          * Searches for a user by their username through an API call.
          * Updates the search result section with feedback.
          */
-        {# comment #} function searchUser() {
-            let username = document.getElementById("search-bar").value;
-            if (!username) {
-                alert("Please enter a username");
-                return;
-            }
+        function searchUser() {
+            // let username = document.getElementById("search-bar").value;
+            // if (!username) {
+            //     alert("Please enter a username");
+            //     return;
+            // }
 
-            // Fetch user data from the server
-            fetch(`/search?username=${encodeURIComponent(username)}`)
-                .then(response => response.json())  // Convert response to JSON
-                .then(data => {
-                    // Display the search result message
-                    document.getElementById("search-results").innerText = data.message;
-                })
-                .catch(error => {
-                    // Handle errors and provide feedback to the user
-                    document.getElementById("search-results").innerText = "Error searching for user";
-                }); 
+            // // Fetch user data from the server
+            // fetch(`/search?username=${encodeURIComponent(username)}`)
+            //     .then(response => response.json())  // Convert response to JSON
+            //     .then(data => {
+            //         // Display the search result message
+            //         document.getElementById("search-results").innerText = data.message;
+            //     })
+            //     .catch(error => {
+            //         // Handle errors and provide feedback to the user
+            //         document.getElementById("search-results").innerText = "Error searching for user";
+            //     }); 
                 
-            {# endcomment #}
+            
 
             let username = document.getElementById("search-bar").value;
             if (!username) {
@@ -136,18 +136,43 @@
                 .catch(error => {
                     document.getElementById("search-results").innerText = "Error searching for users";
                 }); 
-
-            function redirectToSearch() {
-                let username = document.getElementById("search-bar").value;
-                if (!username) {
-                    alert("Please enter a username");
-                    return;
-                }
-
-                // Redirect to search.html with the query parameter
-                window.location.href = `/search.html?username=${encodeURIComponent(username)}`;
-            }
         }
+
+
+        function redirectToSearch() {
+            // Get the search input value
+            const searchQuery = document.getElementById('search-bar').value.trim();
+
+            // Check if the input is empty
+            if (!searchQuery) {
+                alert("Please enter a username to search.");
+                return;
+            }
+
+            // Make an AJAX request to the search endpoint
+            fetch(`/search_user?username=${encodeURIComponent(searchQuery)}`)
+                .then(response => response.json()) // Convert response to JSON
+                .then(data => {
+                    const resultsDiv = document.getElementById('search-results');
+                    resultsDiv.innerHTML = ''; // Clear previous results
+
+                    if (data.exists) {
+                        // Display list of found users
+                        let userList = '<h3>Search Results:</h3><ul>';
+                        data.users.forEach(user => {
+                            userList += `<li><a href="/profile/${user.username}">${user.username}</a></li>`;
+                        });
+                        userList += '</ul>';
+                        resultsDiv.innerHTML = userList;
+                    } else {
+                        resultsDiv.innerHTML = '<p>No matching users found.</p>';
+                    }
+                })
+                .catch(error => console.error('Error fetching users:', error));
+            }
+
+
+        
     </script>
 </head>
 

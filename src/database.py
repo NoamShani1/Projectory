@@ -11,7 +11,7 @@ JSON_FILE = "userpass.json"  # Using userpass.json for JSON storage
 # Source: ChatGPT
 # Prompt: "Write a Flask application that connects to an SQLite database. 
 # The database should contain a table of users with usernames. 
-# mplement an endpoint /search_user that takes a GET parameter called username and 
+# implement an endpoint /search_user that takes a GET parameter called username and 
 # searches for users whose usernames match the query using a LIKE SQL statement. 
 # Return a JSON response indicating whether any users were found, 
 # along with the list of matching usernames if any. Use a simple database file named pass.db.'
