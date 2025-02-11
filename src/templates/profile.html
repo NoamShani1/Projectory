@@ -11,25 +11,59 @@
         margin: 0;
         padding: 0;
         display: flex;
-        justify-content: center;
+        flex-direction: column;
         align-items: center;
+        justify-content: center;
         height: 100vh;
       }
 
       .container {
-        width: 80%;
+        width: 90%;
+        max-width: 1200px;
+        display: grid;
+        grid-template-columns: 1fr 3fr;
+        gap: 20px;
+      }
+
+      .sidebar {
         display: flex;
         flex-direction: column;
-        align-items: center;
+        gap: 15px;
+        padding: 20px;
+        border: 1px solid #ccc;
+        border-radius: 8px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        background-color: #f8f9fa;
+      }
+
+      .sidebar h3 {
+        font-size: 18px;
+        margin-bottom: 10px;
+      }
+
+      .sidebar a {
+        color: #007bff;
+        text-decoration: none;
+      }
+
+      .sidebar a:hover {
+        text-decoration: underline;
+      }
+
+      .main-content {
+        padding: 20px;
+        border: 1px solid #ccc;
+        border-radius: 8px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
       }
 
       .header {
         display: flex;
         justify-content: space-between;
-        width: 100%;
-        padding: 20px;
-        font-size: 24px;
+        align-items: center;
+        font-size: 28px;
         font-weight: bold;
+        margin-bottom: 20px;
       }
 
       .profile-header {
@@ -39,27 +73,39 @@
       }
 
       .profile-picture {
-        width: 50px;
-        height: 50px;
+        width: 70px;
+        height: 70px;
         border-radius: 50%;
         background-color: lightgray;
+        background-size: cover;
+        background-position: center;
       }
 
-      .profile-section {
+      .image-placeholder {
         width: 100%;
-        padding: 20px;
-        border: 1px solid #ccc;
+        height: 300px;
+        background-color: lightgray;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 24px;
+        color: #666;
         border-radius: 8px;
-        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        margin-bottom: 20px;
+      }
+
+      .section {
         margin-bottom: 20px;
       }
 
       .section h3 {
+        font-size: 20px;
         margin-bottom: 10px;
       }
 
       .section ul {
         padding-left: 20px;
+        list-style-type: disc;
       }
 
       a {
@@ -70,65 +116,85 @@
       a:hover {
         text-decoration: underline;
       }
+
+      .cta-links {
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+        margin-top: 20px;
+      }
     </style>
   </head>
 
   <body>
     <div class="container">
-      <div class="header">
-        <div>{{ user.username }}'s Profile</div>
-        <div class="profile-header">
-          <div class="profile-picture"></div>
-          <div>{{ user.username }}</div>
-        </div>
-      </div>
-
-      <div class="profile-section">
+      <!-- Sidebar Section -->
+      <div class="sidebar">
         <h3>Full Name</h3>
         <p>{{ user.first_name }} {{ user.last_name }}</p>
-      </div>
 
-      <div class="profile-section">
+        <h3>Download CV</h3>
+        {% if user.cv_path %}
+          <a href="{{ url_for('static', filename='uploads/' + user.cv_path.split('/')[-1]) }}" download>
+            Download CV
+          </a>
+        {% else %}
+          <p>No CV uploaded.</p>
+        {% endif %}
+
         <h3>Skills</h3>
         <ul>
           {% for skill in (user.skills or []) %}
-          <li>{{ skill }}</li>
+            <li>{{ skill }}</li>
           {% else %}
-          <li>No skills available.</li>
+            <li>No skills available.</li>
           {% endfor %}
         </ul>
-      </div>
 
-      <div class="profile-section">
         <h3>Links</h3>
         <ul>
           {% for link in user.links %}
-          <li><a href="{{ link }}" target="_blank">{{ link }}</a></li>
+            <li><a href="{{ link }}" target="_blank">{{ link }}</a></li>
           {% else %}
-          <li>No links available.</li>
+            <li>No links available.</li>
           {% endfor %}
         </ul>
       </div>
 
-      <div class="profile-section">
-        <h3>Download CV</h3>
-        {% if user.cv_path %}
-        <a
-          href="{{ url_for('static', filename='uploads/' + user.cv_path.split('/')[-1]) }}"
-          download
-          >Download CV</a
-        >
-        {% else %}
-        <p>No CV uploaded.</p>
-        {% endif %}
-      </div>
+      <!-- Main Content Section -->
+      <div class="main-content">
+        <div class="header">
+          <span>PROJECTORY</span>
+          <div class="profile-header">
+            <div
+              class="profile-picture"
+              style="background-image: url('{{ user.profile_picture_path or '' }}');"
+            >
+              {% if not user.profile_picture_path %}
+                <!-- Placeholder if no profile picture -->
+                <div></div>
+              {% endif %}
+            </div>
+            <div>{{ user.username }}</div>
+          </div>
+        </div>
 
-      <div class="profile-section">
-        <p>
-          <a href="{{ url_for('edit_profile', username=user.username) }}"
-            >Edit Profile +</a
-          >
-        </p>
+        <!-- Placeholder for central image -->
+        <div class="image-placeholder">
+          {% if user.profile_image_path %}
+            <img
+              src="{{ url_for('static', filename='uploads/' + user.profile_image_path.split('/')[-1]) }}"
+              alt="Profile Main Image"
+              style="max-width: 100%; height: auto; border-radius: 8px;"
+            />
+          {% else %}
+            Image Placeholder
+          {% endif %}
+        </div>
+
+        <div class="cta-links">
+          <p><a href="{{ url_for('edit_profile', username=user.username) }}">Edit Profile +</a></p>
+        </div>
       </div>
     </div>
   </body>
