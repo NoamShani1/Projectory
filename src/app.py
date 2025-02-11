@@ -4,14 +4,12 @@ import json
 import logging
 import sqlite3
 from flask import Flask, jsonify, redirect, render_template, request, url_for
-from __init__ import create_app
+from src import create_app
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy import func
 from werkzeug.utils import secure_filename
 from flask_migrate import Migrate
-
-
-
+from .models import User, db
 
 # Configure logging for debugging purposes
 logging.basicConfig(level=logging.DEBUG)
@@ -47,25 +45,11 @@ def allowed_file(filename):
 app.config['SQLALCHEMY_DATABASE_URI'] = f'sqlite:///{os.path.join(basedir, "pass.db")}'
  # Using a local SQLite database
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False  # Disable overhead of tracking modifications
-# Initialize SQLAlchemy for database management
-db = SQLAlchemy(app)
 # Intializing user json file 
 USER_DB = 'userpass.json'
 
 # Initialize Flask-Migrate
 migrate = Migrate(app, db)
-
-# Define the User model to represent the 'users' table in the database
-class User(db.Model):
-    __tablename__ = 'users'
-    id = db.Column(db.Integer, primary_key=True)
-    username = db.Column(db.String(80), nullable=False)
-    first_name = db.Column(db.String(80), nullable=False)
-    last_name = db.Column(db.String(80), nullable=False)
-    password = db.Column(db.String(80), nullable=False)
-    skills = db.Column(db.PickleType, default=list)  # Ensure it defaults to an empty list
-    links = db.Column(db.PickleType, default=list)
-    cv_path = db.Column(db.String(200), nullable=True)
 
 
 # Automatically create tables before the first request if they don't exist
@@ -302,7 +286,9 @@ def upload_cv():
     if 'cv' not in request.files:
         return jsonify({"error": "No file part"}), 400
 
+
     file = request.files['cv']
+    username = request.form['username']
 
     if file.filename == '':
         return jsonify({"error": "No selected file"}), 400
@@ -312,11 +298,14 @@ def upload_cv():
         save_path = os.path.join(app.config['UPLOAD_FOLDER'], filename)
         file.save(save_path)
 
-        # Optionally, save the path to the database (if needed)
-        # user.cv_path = save_path
-        # db.session.commit()
-
-        return redirect(url_for('profile_page', username=request.form['username']))
+        # Update the user's CV path
+        user = User.query.filter_by(username=username).first()
+        if user:
+            user.cv_path = save_path
+            db.session.commit()
+            return redirect(url_for('profile_page', username=username))
+        else:
+            return jsonify({"error": "User not found"}), 404
     else:
         return jsonify({"error": "Invalid file format. Only PDF files are allowed."}), 400
 

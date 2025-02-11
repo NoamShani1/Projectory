@@ -28,5 +28,11 @@
         "first_name": "cornelius",
         "last_name": "longname butler",
         "password": "test"
+    },
+    {
+        "username": "username",
+        "first_name": "new",
+        "last_name": "username",
+        "password": "1234"
     }
 ]
