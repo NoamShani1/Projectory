@@ -321,51 +321,41 @@ def upload_cv():
     else:
         return jsonify({"error": "Invalid file format. Only PDF files are allowed."}), 400
 
-
-
-@app.route('/save_project/<username>', methods=['POST'])
+@app.route('/save_project/<username>', methods=['POST', 'GET'])
 def save_project(username):
+    #print(f"Debug: opens page")
     user = User.query.filter_by(username=username).first()
     if not user:
         return jsonify({"error": "User not found"}), 404
 
-    # Get form data
-    project_title = request.form.get("project_title")
-    project_description = request.form.get("project_description")
-
-    # Validate inputs
-    if not project_title or not project_description:
-        return jsonify({"error": "Title and description are required"}), 400
-
-    # Handle file upload
-    if 'project_image' not in request.files:
-        return jsonify({"error": "No file part"}), 400
-
-    file = request.files['project_image']
+    # Get form data (no extra checks, just save input)
+    project_title = request.form.get("project_title") or None
+    project_description = request.form.get("project_description") or None
+    #print(f"Debug: getting request forms for input")
     
-    if file.filename == '':
-        return jsonify({"error": "No selected file"}), 400
+    # Handle image upload 
+    # file_path = None
+    # if 'project_image' in request.files:
+    #     file = request.files['project_image']
+    #     if file.filename and allowed_file(file.filename):
+    #         filename = secure_filename(file.filename)
+    #         file_path = os.path.join(app.config['UPLOAD_FOLDER'], filename)
+    #         file.save(file_path)
+    #         file_path = f"uploads/projects/{filename}"  # Save relative path for static access
+    #         print(f"Debug: able to upload")
 
-    if file and allowed_file(file.filename):
-        filename = secure_filename(file.filename)
-        file_path = os.path.join(app.config['UPLOAD_FOLDER'], filename)
-        file.save(file_path)
+    # Save new project in the database
+    new_project = Project(
+        user_id=user.id,
+        title=project_title,
+        description=project_description,
+      #  image_path=file_path  # Can be None if no image uploaded
+    )
 
-        # Save project in the database
-        new_project = Project(
-            user_id=user.id,
-            title=project_title,
-            description=project_description,
-            image_path=file_path
-        )
+    db.session.add(new_project)
+    db.session.commit()
 
-        db.session.add(new_project)
-        db.session.commit()
-
-        return redirect(url_for('profile_page', username=username))
-    else:
-        return jsonify({"error": "Invalid file format. Only images allowed."}), 400
-    
+    return redirect(url_for('profile_page', username=username))
 
 # Run the application if the script is executed directly
 if __name__ == "__main__":
