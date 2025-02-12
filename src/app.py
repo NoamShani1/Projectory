@@ -9,7 +9,7 @@ from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy import func
 from werkzeug.utils import secure_filename
 from flask_migrate import Migrate
-from .models import User, db
+from .models import User, db, Project
 
 # Configure logging for debugging purposes
 logging.basicConfig(level=logging.DEBUG)
@@ -25,6 +25,18 @@ if not os.path.exists(db_folder):
     os.makedirs(db_folder)  # Create the database folder if it doesn't exist
 
 db_file = os.path.join(db_folder, "pass.db")
+
+# Source: ChatGPT
+# Prompt: Give me a route to handle upload and saving of projects
+# Define the folder for storing uploaded project images
+UPLOAD_FOLDER = 'static/uploads/projects'
+ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'gif'}
+
+app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
+os.makedirs(UPLOAD_FOLDER, exist_ok=True)  # Ensure directory exists
+
+def allowed_file(filename):
+    return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
 
 
 # Source: ChatGPT
@@ -311,6 +323,49 @@ def upload_cv():
 
 
 
+@app.route('/save_project/<username>', methods=['POST'])
+def save_project(username):
+    user = User.query.filter_by(username=username).first()
+    if not user:
+        return jsonify({"error": "User not found"}), 404
+
+    # Get form data
+    project_title = request.form.get("project_title")
+    project_description = request.form.get("project_description")
+
+    # Validate inputs
+    if not project_title or not project_description:
+        return jsonify({"error": "Title and description are required"}), 400
+
+    # Handle file upload
+    if 'project_image' not in request.files:
+        return jsonify({"error": "No file part"}), 400
+
+    file = request.files['project_image']
+    
+    if file.filename == '':
+        return jsonify({"error": "No selected file"}), 400
+
+    if file and allowed_file(file.filename):
+        filename = secure_filename(file.filename)
+        file_path = os.path.join(app.config['UPLOAD_FOLDER'], filename)
+        file.save(file_path)
+
+        # Save project in the database
+        new_project = Project(
+            user_id=user.id,
+            title=project_title,
+            description=project_description,
+            image_path=file_path
+        )
+
+        db.session.add(new_project)
+        db.session.commit()
+
+        return redirect(url_for('profile_page', username=username))
+    else:
+        return jsonify({"error": "Invalid file format. Only images allowed."}), 400
+    
 
 # Run the application if the script is executed directly
 if __name__ == "__main__":

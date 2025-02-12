@@ -135,28 +135,31 @@
 
         <h3>Download CV</h3>
         {% if user.cv_path %}
-          <a href="{{ url_for('static', filename='uploads/' + user.cv_path.split('/')[-1]) }}" download>
-            Download CV
-          </a>
+        <a
+          href="{{ url_for('static', filename='uploads/' + user.cv_path.split('/')[-1]) }}"
+          download
+        >
+          Download CV
+        </a>
         {% else %}
-          <p>No CV uploaded.</p>
+        <p>No CV uploaded.</p>
         {% endif %}
 
         <h3>Skills</h3>
         <ul>
           {% for skill in (user.skills or []) %}
-            <li>{{ skill }}</li>
+          <li>{{ skill }}</li>
           {% else %}
-            <li>No skills available.</li>
+          <li>No skills available.</li>
           {% endfor %}
         </ul>
 
         <h3>Links</h3>
         <ul>
           {% for link in user.links %}
-            <li><a href="{{ link }}" target="_blank">{{ link }}</a></li>
+          <li><a href="{{ link }}" target="_blank">{{ link }}</a></li>
           {% else %}
-            <li>No links available.</li>
+          <li>No links available.</li>
           {% endfor %}
         </ul>
       </div>
@@ -171,8 +174,8 @@
               style="background-image: url('{{ user.profile_picture_path or '' }}');"
             >
               {% if not user.profile_picture_path %}
-                <!-- Placeholder if no profile picture -->
-                <div></div>
+              <!-- Placeholder if no profile picture -->
+              <div></div>
               {% endif %}
             </div>
             <div>{{ user.username }}</div>
@@ -181,19 +184,21 @@
 
         <!-- Placeholder for central image -->
         <div class="image-placeholder">
-          {% if user.profile_image_path %}
-            <img
-              src="{{ url_for('static', filename='uploads/' + user.profile_image_path.split('/')[-1]) }}"
-              alt="Profile Main Image"
-              style="max-width: 100%; height: auto; border-radius: 8px;"
-            />
-          {% else %}
-            Image Placeholder
-          {% endif %}
+          {% if user.project and user.project.image_path %}
+          <img
+            src="{{ url_for('static', filename=user.project.image_path.split('/')[-1]) }}"
+            alt="Project Image"
+            style="max-width: 100%; height: auto; border-radius: 8px"
+          />
+          {% else %} Image Placeholder {% endif %}
         </div>
 
         <div class="cta-links">
-          <p><a href="{{ url_for('edit_profile', username=user.username) }}">Edit Profile +</a></p>
+          <p>
+            <a href="{{ url_for('edit_profile', username=user.username) }}"
+              >Edit Profile +</a
+            >
+          </p>
         </div>
       </div>
     </div>
