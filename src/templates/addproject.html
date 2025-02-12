@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Add Project - {{ user.username }}</title>
+    <style>
+        body {
+            background-color: white;
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+
+        .container {
+            width: 80%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .header {
+            display: flex;
+            justify-content: space-between;
+            width: 100%;
+            padding: 20px;
+            font-size: 24px;
+            font-weight: bold;
+        }
+
+        .profile-header {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .profile-picture {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background-color: lightgray;
+        }
+
+        .form-container {
+            width: 100%;
+            padding: 20px;
+            border: 1px solid #ccc;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .section {
+            margin-bottom: 20px;
+        }
+
+        .section h3 {
+            margin-bottom: 10px;
+        }
+
+        input[type="text"], input[type="file"], textarea {
+            width: 100%;
+            padding: 10px;
+            font-size: 16px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+
+        textarea {
+            height: 100px;
+            resize: none;
+        }
+
+        button {
+            padding: 10px 20px;
+            font-size: 16px;
+            cursor: pointer;
+            border: 1px solid #007BFF;
+            background-color: #007BFF;
+            color: white;
+            border-radius: 5px;
+        }
+
+        button:hover {
+            background-color: #0056b3;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <div class="header">
+            <div>Add Project</div>
+            <div class="profile-header">
+                <div class="profile-picture"></div>
+                <div>{{ user.username }}</div>
+            </div>
+        </div>
+
+        <div class="form-container">
+            <form action="{{ url_for('save_project', username=user.username) }}" method="POST" enctype="multipart/form-data">
+                <!-- Project Title -->
+                <div class="section">
+                    <h3>Project Title</h3>
+                    <input type="text" name="project_title" placeholder="Enter project title" required>
+                </div>
+
+                <!-- Project Description -->
+                <div class="section">
+                    <h3>Project Description</h3>
+                    <textarea name="project_description" placeholder="Write a short description of your project..." required></textarea>
+                </div>
+
+                <!-- Project Image Upload -->
+                <div class="section">
+                    <h3>Upload Project Image</h3>
+                    <input type="file" name="project_image" accept="image/*" required>
+                </div>
+
+                <button type="submit">Save Project</button>
+            </form>
+        </div>
+    </div>
+</body>
+</html>
