@@ -1,15 +1,79 @@
 # Projectory
-Repo for Group "Projectory" in FSWD WS 2024/25
-Team members: Noam Shani, Neele-Sofie Kuhn
-Ambition level: A solid application with the neccesary functions to fulfill its goal. 
+DOCUMENTATION: 
+https://noamshani1.github.io/Projectory/
 
-App idea: The goal is to develop a web application where users can create a profile and post about projects. It gives young professionals the chance to present their skills to potential employers. 
+## Repo for Group "Projectory" - FSWD WS 2024/25
+Team Members:
 
-Functions: 
-1. Registration & Login: Users can create an account and sign in to edit the content. Visitors can find and view profiles from the users.
-2. Creating a profile: Users can add their CV and information regarding their skills. (Name, Branch, Experience, Link to social media, ...)
-3. Posting projects: Users can post refence projects including title, description, pictures, links and optional pictures. The posts are shown at the personal users profile.
-4. View profile: Visitors can see users profiles and the posted projects.
+Noam Shani
+Neele-Sofie Kuhn
+
+Ambition Level:
+A solid application with the necessary functions to fulfill its goal.
+
+## Project Overview
+Projectory is a web application designed to help young professionals showcase their skills and projects. The platform allows users to create profiles, upload their CVs, and share projects, making it easier to connect with potential employers or collaborators.
+
+
+
+## Features
+User Registration & Authentication:
+Users can sign up and log in to create and manage their profiles.
+
+Profile Management:
+Users can add and update information such as their name, industry, experience, skills, and social media links.
+
+Project Posting:
+Users can upload and showcase reference projects, including a title, description, links, and optional images.
+
+Profile & Project Visibility:
+Visitors can browse user profiles and view posted projects.
+
+
+## Installation & Running the Project
+#### Prerequisites
+Make sure you have the following installed on your system:
+
+- Python 3.x
+- Flask
+- Required dependencies from requirements.txt
+  
+## Setup & Execution
+Fork and Clone the Repository:
+`git clone https://github.com/NoamShani1/Projectory.git
+cd Projectory`
+
+Create a Virtual Environment (Recommended):
+`python -m venv venv
+source venv/bin/activate  # On macOS/Linux
+venv\Scripts\activate  # On Windows`
+
+Install Dependencies:
+`pip install -r requirements.txt`
+
+Run the Application:
+Using Flask: 
+`flask run`
+
+
+Alternatively, using Python:
+`python app.py`
+
+or
+
+`python -m app.src`
+(Please verify if python -m app.src is the correct command based on your project structure.)
+
+## Access the App:
+Open http://127.0.0.1:5000/ in your browser.
+
+
+
+
+
+
+
+
 
 
 
