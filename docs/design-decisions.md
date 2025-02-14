@@ -32,7 +32,7 @@ User Deletion
 ### Meta
 
 Status
-: **Work in progress** - Decided 
+: **Decided**  
 
 Updated
 : 01-02-2025
@@ -53,14 +53,14 @@ Flask-Login was implemented to handle session management, ensuring that authenti
 #### Criterion
 
 Basic Session Handling
-**Security**  Weak
-**Ease of Use** | Manual 
-**Scalabilitye** | Limited 
+- **Security**  Weak
+- **Ease of Use** | Manual 
+- **Scalabilitye** | Limited 
 
  Flask-Login 
- **Security**  Strong 
-**Ease of Use** Automated
-**Scalabilitye** Flexible |
+ - **Security**  Strong 
+- **Ease of Use** Automated
+- **Scalabilitye** Flexible |
 
 ---
 
@@ -113,14 +113,14 @@ A grid-based layout was implemented to balance visual appeal and content density
 #### Criterion
 
 List View
-**Visual Appeal**  Minimal
-**Information Density** | High 
-**Navigation** | Linear 
+- **Visual Appeal**  Minimal
+- **Information Density** | High 
+- **Navigation** | Linear 
 
 Grid View
-**Visual Appeal**  Clean
-**Information Density** | Balanced 
-**Navigation** | Clear cut 
+- **Visual Appeal**  Clean
+- **Information Density** | Balanced 
+- **Navigation** | Clear cut 
 
 *Decision was taken by:* Noam Shani
 
@@ -152,14 +152,14 @@ User search was built around usernames to facilitate ease of use and quick navig
 
 
 ID-Based Search
-**Usability**  lookup required 
-**Search speed** | fast 
-**Accessibility** | low 
+- **Usability**  lookup required 
+- **Search speed** | fast 
+- **Accessibility** | low 
 
 Grid View
-**Usability**  direct
-**Search speed** | High 
-**Accessibility** | high 
+- **Usability**  direct
+- **Search speed** | High 
+- **Accessibility** | high 
 
 *Decision was taken by:* Noam Shani
 
@@ -188,13 +188,13 @@ The /delete_profile/<username> route was added to allow users to be removed from
 #### Criterion
 
 Soft Delete
-**Data Recovery**  Possible 
-**Database Integrity** | Retains unused data 
+- **Data Recovery**  Possible 
+- **Database Integrity** | Retains unused data 
 
 
 Permanent Delete
-**Data Recovery**  Irreversible 
-**Database Integrity** | Clean
+- **Data Recovery**  Irreversible 
+- **Database Integrity** | Clean
 
 *Decision was taken by:* Noam Shani
 
