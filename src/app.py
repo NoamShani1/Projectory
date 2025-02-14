@@ -325,6 +325,39 @@ def upload_cv():
             return jsonify({"error": "User not found"}), 404
     else:
         return jsonify({"error": "Invalid file format. Only PDF files are allowed."}), 400
+    
+    
+    
+@app.route('/delete_profile/<username>', methods=['POST'])
+def delete_profile(username):
+    # Fetch the user from the database
+    user = User.query.filter_by(username=username).first()
+
+    if not user:
+        return jsonify({"error": "User not found"}), 404
+
+    # Delete the user from the database
+    db.session.delete(user)
+    db.session.commit()
+
+    # Remove user from JSON file (userpass.json)
+    json_file = "userpass.json"
+
+    if os.path.exists(json_file):
+        with open(json_file, "r") as file:
+            users_data = json.load(file)
+
+        # Remove user from the list
+        updated_users = [u for u in users_data if u["username"] != username]
+
+        # Save updated data back to the JSON file
+        with open(json_file, "w") as file:
+            json.dump(updated_users, file, indent=4)
+
+    print(f"User {username} deleted from database and JSON file.")
+
+    # Redirect to homepage or login page after deletion
+    return redirect(url_for('login_page'))  # Change this if needed
 
 # Run the application if the script is executed directly
 if __name__ == "__main__":

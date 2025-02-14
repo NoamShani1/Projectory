@@ -1,206 +1,232 @@
 <!DOCTYPE html>
 <html lang="en">
-
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Edit Profile - {{ user.username }}</title>
     <style>
-        body {
-            background-color: white;
-            font-family: Arial, sans-serif;
-            margin: 0;
-            padding: 0;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
-        }
+      body {
+        background-color: white;
+        font-family: Arial, sans-serif;
+        margin: 0;
+        padding: 0;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 100vh;
+      }
 
-        .container {
-            width: 80%;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-        }
+      .container {
+        width: 80%;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+      }
 
-        .header {
-            display: flex;
-            justify-content: space-between;
-            width: 100%;
-            padding: 20px;
-            font-size: 24px;
-            font-weight: bold;
-        }
+      .header {
+        display: flex;
+        justify-content: space-between;
+        width: 100%;
+        padding: 20px;
+        font-size: 24px;
+        font-weight: bold;
+      }
 
-        .profile-header {
-            display: flex;
-            align-items: center;
-            gap: 15px;
-        }
+      .profile-header {
+        display: flex;
+        align-items: center;
+        gap: 15px;
+      }
 
-        .profile-picture {
-            width: 50px;
-            height: 50px;
-            border-radius: 50%;
-            background-color: lightgray;
-        }
+      .profile-picture {
+        width: 50px;
+        height: 50px;
+        border-radius: 50%;
+        background-color: lightgray;
+      }
 
-        .edit-container {
-            width: 100%;
-            padding: 20px;
-            border: 1px solid #ccc;
-            border-radius: 8px;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-        }
+      .edit-container {
+        width: 100%;
+        padding: 20px;
+        border: 1px solid #ccc;
+        border-radius: 8px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+      }
 
-        .section {
-            margin-bottom: 20px;
-        }
+      .section {
+        margin-bottom: 20px;
+      }
 
-        .section h3 {
-            margin-bottom: 10px;
-        }
+      .section h3 {
+        margin-bottom: 10px;
+      }
 
-        .skill-list, .link-list {
-            margin-top: 10px;
-            padding-left: 20px;
-        }
+      .skill-list,
+      .link-list {
+        margin-top: 10px;
+        padding-left: 20px;
+      }
 
-        button {
-            padding: 5px 10px;
-            font-size: 16px;
-            cursor: pointer;
-            border: 1px solid #007BFF;
-            background-color: #007BFF;
-            color: white;
-            border-radius: 5px;
-        }
+      button {
+        padding: 5px 10px;
+        font-size: 16px;
+        cursor: pointer;
+        border: 1px solid #007bff;
+        background-color: #007bff;
+        color: white;
+        border-radius: 5px;
+      }
 
-        button:hover {
-            background-color: #0056b3;
-        }
+      button:hover {
+        background-color: #0056b3;
+      }
 
-        input[type="text"], input[type="url"], input[type="file"] {
-            padding: 5px;
-            font-size: 16px;
-            width: 250px;
-            margin-right: 5px;
-        }
+      input[type="text"],
+      input[type="url"],
+      input[type="file"] {
+        padding: 5px;
+        font-size: 16px;
+        width: 250px;
+        margin-right: 5px;
+      }
     </style>
     <script>
-        function addSkill() {
-            const skillInput = document.getElementById('new-skill');
-            const skillList = document.getElementById('skill-list');
-            const skill = skillInput.value.trim();
+      function addSkill() {
+        const skillInput = document.getElementById("new-skill");
+        const skillList = document.getElementById("skill-list");
+        const skill = skillInput.value.trim();
 
-            if (skill) {
-                // Create a new list item
-                const listItem = document.createElement('li');
-                listItem.textContent = skill;
+        if (skill) {
+          // Create a new list item
+          const listItem = document.createElement("li");
+          listItem.textContent = skill;
 
-                // Create a hidden input field so that the skill is included in the form submission
-                const hiddenInput = document.createElement('input');
-                hiddenInput.type = 'hidden';
-                hiddenInput.name = 'skills[]';  // Ensures all skills are sent correctly
-                hiddenInput.value = skill;
+          // Create a hidden input field so that the skill is included in the form submission
+          const hiddenInput = document.createElement("input");
+          hiddenInput.type = "hidden";
+          hiddenInput.name = "skills[]"; // Ensures all skills are sent correctly
+          hiddenInput.value = skill;
 
-                // Append elements
-                listItem.appendChild(hiddenInput);
-                skillList.appendChild(listItem);
+          // Append elements
+          listItem.appendChild(hiddenInput);
+          skillList.appendChild(listItem);
 
-                // Clear input field
-                skillInput.value = '';
-            }
+          // Clear input field
+          skillInput.value = "";
         }
+      }
 
-        function addLink() {
-            const linkInput = document.getElementById('new-link');
-            const linkList = document.getElementById('link-list');
-            const link = linkInput.value.trim();
+      function addLink() {
+        const linkInput = document.getElementById("new-link");
+        const linkList = document.getElementById("link-list");
+        const link = linkInput.value.trim();
 
-            if (link) {
-                // Create a new list item
-                const listItem = document.createElement('li');
-                
-                // Create a clickable link
-                const linkElement = document.createElement('a');
-                linkElement.href = link;
-                linkElement.target = '_blank';
-                linkElement.textContent = link;
+        if (link) {
+          // Create a new list item
+          const listItem = document.createElement("li");
 
-                // Create a hidden input field for form submission
-                const hiddenInput = document.createElement('input');
-                hiddenInput.type = 'hidden';
-                hiddenInput.name = 'links[]';
-                hiddenInput.value = link;
+          // Create a clickable link
+          const linkElement = document.createElement("a");
+          linkElement.href = link;
+          linkElement.target = "_blank";
+          linkElement.textContent = link;
 
-                // Append elements
-                listItem.appendChild(linkElement);
-                listItem.appendChild(hiddenInput);
-                linkList.appendChild(listItem);
+          // Create a hidden input field for form submission
+          const hiddenInput = document.createElement("input");
+          hiddenInput.type = "hidden";
+          hiddenInput.name = "links[]";
+          hiddenInput.value = link;
 
-                // Clear input field
-                linkInput.value = '';
-            }
+          // Append elements
+          listItem.appendChild(linkElement);
+          listItem.appendChild(hiddenInput);
+          linkList.appendChild(listItem);
+
+          // Clear input field
+          linkInput.value = "";
         }
+      }
     </script>
-</head>
+  </head>
 
-<body>
+  <body>
     <div class="container">
-        <div class="header">
-            <div>Edit Profile</div>
-            <div class="profile-header">
-                <div class="profile-picture"></div>
-                <div>{{ user.username }}</div>
-            </div>
+      <div class="header">
+        <div>Edit Profile</div>
+        <div class="profile-header">
+          <div class="profile-picture"></div>
+          <div>{{ user.username }}</div>
         </div>
+      </div>
 
-        <div class="edit-container">
-            <form action="{{ url_for('save_profile', username=user.username) }}" method="POST">
-                <!-- Section for editing skills -->
-                <div class="section">
-                    <h3>Skills</h3>
-                    <ul id="skill-list" class="skill-list">
-                        {% for skill in user.skills %}
-                            <li>
-                                {{ skill }}
-                                <input type="hidden" name="skills[]" value="{{ skill }}">
-                            </li>
-                        {% endfor %}
-                    </ul>
-                    <input type="text" id="new-skill" placeholder="Enter a new skill">
-                    <button type="button" onclick="addSkill()">Add Skill</button>
-                </div>
+      <div class="edit-container">
+        <form
+          action="{{ url_for('save_profile', username=user.username) }}"
+          method="POST"
+        >
+          <!-- Section for editing skills -->
+          <div class="section">
+            <h3>Skills</h3>
+            <ul id="skill-list" class="skill-list">
+              {% for skill in user.skills %}
+              <li>
+                {{ skill }}
+                <input type="hidden" name="skills[]" value="{{ skill }}" />
+              </li>
+              {% endfor %}
+            </ul>
+            <input type="text" id="new-skill" placeholder="Enter a new skill" />
+            <button type="button" onclick="addSkill()">Add Skill</button>
+          </div>
 
-                <!-- Section for editing links -->
-                <div class="section">
-                    <h3>Links</h3>
-                    <ul id="link-list" class="link-list">
-                        {% for link in user.links %}
-                            <li>
-                                <a href="{{ link }}" target="_blank">{{ link }}</a>
-                                <input type="hidden" name="links[]" value="{{ link }}">
-                            </li>
-                        {% endfor %}
-                    </ul>
-                    <input type="url" id="new-link" placeholder="Enter a new link">
-                    <button type="button" onclick="addLink()">Add Link</button>
-                </div>
+          <!-- Section for editing links -->
+          <div class="section">
+            <h3>Links</h3>
+            <ul id="link-list" class="link-list">
+              {% for link in user.links %}
+              <li>
+                <a href="{{ link }}" target="_blank">{{ link }}</a>
+                <input type="hidden" name="links[]" value="{{ link }}" />
+              </li>
+              {% endfor %}
+            </ul>
+            <input type="url" id="new-link" placeholder="Enter a new link" />
+            <button type="button" onclick="addLink()">Add Link</button>
+          </div>
 
-                <button type="submit">Save Profile</button>
-            </form>
+          <button type="submit">Save Profile</button>
+        </form>
 
-            <!-- Form for uploading CV -->
-            <form action="{{ url_for('upload_cv') }}" method="POST" enctype="multipart/form-data">
-                <h3>Upload CV</h3>
-                <input type="hidden" name="username" value="{{ user.username }}">
-                <input type="file" name="cv" accept="application/pdf" required>
-                <button type="submit">Upload CV</button>
-            </form>
-        </div>
+        <!-- Form for uploading CV -->
+        <form
+          action="{{ url_for('upload_cv') }}"
+          method="POST"
+          enctype="multipart/form-data"
+        >
+          <h3>Upload CV</h3>
+          <input type="hidden" name="username" value="{{ user.username }}" />
+          <input type="file" name="cv" accept="application/pdf" required />
+          <button type="submit">Upload CV</button>
+        </form>
+        <form
+          action="{{ url_for('delete_profile', username=user.username) }}"
+          method="POST"
+          onsubmit="return confirm('Are you sure you want to delete your profile? This action cannot be undone.');"
+        >
+          <button
+            type="submit"
+            style="
+              background-color: red;
+              color: white;
+              border: none;
+              padding: 10px 15px;
+              cursor: pointer;
+            "
+          >
+            Delete Profile
+          </button>
+        </form>
+      </div>
     </div>
-</body>
-
+  </body>
 </html>
