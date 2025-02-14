@@ -23,7 +23,8 @@ Search Functionality
 
 File Upload & CV Handling
 
-Security Considerations
+User Deletion
+
 </details>
 
 ## 01: User Authentication
@@ -49,12 +50,17 @@ Therefore, we decided to use Flask-Login for session management, allowing effici
 Flask-Login was implemented to handle session management, ensuring that authentication and user sessions are secure and scalable.
 
 ### Regarded options
-| Criterion | Basic Session Handling| Flask-Login |
-| --- | --- | --- |
-| **Security** | Weak | Strong |
-| **Ease of Use** | Manual | Automated |
-| **Scalabilitye** | Limited | Flexible |
+#### Criterion
 
+Basic Session Handling
+**Security**  Weak
+**Ease of Use** | Manual 
+**Scalabilitye** | Limited 
+
+ Flask-Login 
+ **Security**  Strong 
+**Ease of Use** Automated
+**Scalabilitye** Flexible |
 
 ---
 
@@ -81,3 +87,114 @@ Profiles include usernames, skills, external links, and CV uploads. The profile 
 *Decision was taken by:* Noam Shani
 
 ---
+
+
+
+##  3. Project Display & Sharing
+
+### Meta
+
+Status
+:  **Work in Progress** 
+
+
+### Problem statement
+How should projects be visually represented in a way that maximizes engagement and accessibility?
+
+Projects should be easy to browse while maintaining a clean, visually appealing layout. Users should be able to upload project images and descriptions, making the platform functional for a variety of project types.
+
+Therefore, we implemented a structured grid layout for project displays, allowing users to see a preview of multiple projects at once while keeping the interface clean and organized.
+
+### Decision
+
+A grid-based layout was implemented to balance visual appeal and content density while keeping project descriptions concise.
+
+### Regarded options
+#### Criterion
+
+List View
+**Visual Appeal**  Minimal
+**Information Density** | High 
+**Navigation** | Linear 
+
+Grid View
+**Visual Appeal**  Clean
+**Information Density** | Balanced 
+**Navigation** | Clear cut 
+
+*Decision was taken by:* Noam Shani
+
+
+---
+
+## 4. Search Functionality
+
+### Meta
+
+Status
+:  **Decided** 
+
+
+### Problem statement
+How should the search function? Does a user need to have an account in order to Search? 
+
+User search should be intuitive, allowing users to find each other quickly. While ID-based search ensures uniqueness, it is not user-friendly. Username-based search provides a simpler and more natural way to look up profiles. No login should be required based on the Scope of the project and to ensure higher usability in a real-life scenario.
+
+Therefore, we implemented username-based search to provide a more accessible and user-friendly experience.
+
+### Decision
+
+User search was built around usernames to facilitate ease of use and quick navigation.
+
+### Regarded options
+#### Criterion
+
+
+
+ID-Based Search
+**Usability**  lookup required 
+**Search speed** | fast 
+**Accessibility** | low 
+
+Grid View
+**Usability**  direct
+**Search speed** | High 
+**Accessibility** | high 
+
+*Decision was taken by:* Noam Shani
+
+---
+
+## 6. User Deletion
+
+### Meta
+
+Status
+:  **Decided** 
+
+
+### Problem statement
+Should users be allowed to delete their accounts, and how should this process be handled?
+
+User deletion functionality is necessary to comply with privacy laws and user expectations. The system must ensure that deleting a user removes all related data securely while preventing accidental deletions.
+
+Therefore, we implemented a deletion mechanism that removes user data from the database and also ensures that related entries in JSON files are updated accordingly.
+
+### Decision
+
+The /delete_profile/<username> route was added to allow users to be removed from the database and associated JSON storage. Proper checks ensure that deleted users no longer appear in the system.
+
+### Regarded options
+#### Criterion
+
+Soft Delete
+**Data Recovery**  Possible 
+**Database Integrity** | Retains unused data 
+
+
+Permanent Delete
+**Data Recovery**  Irreversible 
+**Database Integrity** | Clean
+
+*Decision was taken by:* Noam Shani
+

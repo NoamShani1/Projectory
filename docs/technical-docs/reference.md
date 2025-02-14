@@ -24,6 +24,7 @@ User Management Routes
 GET /profile/<username>
 POST /save_profile/<username>
 POST /upload_cv
+POST /delete_profile/<username>
 
 Project Management Routes
 POST /save_project/<username>
@@ -76,7 +77,7 @@ Failure: Returns { "message": "Invalid username or password" }
 
 In case of success, Renders profile.html
 
-![Log in](/Projectory/assets/images/login.png)
+![profile](/Projectory/assets/images/profile.png)
 
 ### GET /signup
 
@@ -105,8 +106,6 @@ Sample Response:
 
 Success: Redirects to /profile/johndoe
 Failure: Returns { "error": "User with username 'johndoe' already exists" }
-
-![Register](/Projectory/assets/images/signup.png)
 
 
 
@@ -148,6 +147,8 @@ If the user is not found:
 
 Renders editprofile.html
 
+![Edit](/Projectory/assets/images/edit.png)
+
 ---
 
 ### `POST /save_profile/<username>`
@@ -156,7 +157,7 @@ Renders editprofile.html
 
 **Methods:** `POST`
 
-**Purpose:** Saves updated skills and links to a user’s profile.
+**Purpose:** Saves updated skills and links to a users profile.
 
 **Sample output:**
 
@@ -183,6 +184,23 @@ Sample Response:
 Success: Redirects to /profile/johndoe
 Failure: Returns { "error": "Invalid file format. Only PDF files are allowed." }
 
+
+---
+
+### `POST /delete_profile/<username`
+
+**Route:** `/delete_profile/<username>`
+
+**Methods:** `POST`
+
+**Purpose:** Deletes a user profile, removing their data from the database and userpass.json.
+
+**Sample output:**
+Sample Request: 
+POST /delete_profile/johndoe
+Sample Response:
+Success: Redirects to /login
+Failure: Returns { "error": "User not found" }
 ---
 
 ## 3. Project Management Routes
