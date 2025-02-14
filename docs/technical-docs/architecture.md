@@ -51,7 +51,7 @@ Interacts with the SQLite database to store and retrieve data.
 
 ## Class Diagram
 
-![Class Diagram](/Projectory/assets/images/CD.png)
+![Class Diagram](/Projectory/assets/images/class.png)
 
 ## Activity
 
