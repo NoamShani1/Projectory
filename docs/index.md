@@ -3,24 +3,22 @@ title: Home
 nav_order: 0
 ---
 
-{: .attention }
-> Any text enclosed by `[ ]` are placeholders, including the opening and closing brackets.
->
-> You may delete this `attention` box.
+
 
 # Projectory
 
 Showcase your projects, unlock new opportunities.
-Projectory helps students to find their fist jobs by showing their projects to potential employers. 
+Projectory helps students find their first jobs by showcasing their projects & abilities to potential employers in a clear-cut, straightforward manner.
 
 ## Team members
 
 ### Noam Jordan Shani
 
 About
-: Some info about Jane
+: I am in the third semester of Business & Computer Science at HWR Berlin. 
 
-Matr.-Nr.: 1234567
+Matr.-Nr.
+: 77212012779
 
 ### Neele-Sofie Kuhn
 

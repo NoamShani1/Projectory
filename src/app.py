@@ -262,23 +262,40 @@ def profile_page(username):
 # Route to save updated profile data
 @app.route('/save_profile/<username>', methods=['POST'])
 def save_profile(username):
+    # Fetch the user from the database
     user = User.query.filter_by(username=username).first()
+
     if not user:
         return jsonify({"error": "User not found"}), 404
 
-    # Save skills
-    skills = request.form.getlist('skills[]')
-    user.skills = skills  # Assuming user.skills is a list or can be processed appropriately
+    # Get the new skills and links from the form submission
+    new_skills = request.form.getlist('skills[]')
+    new_links = request.form.getlist('links[]')
 
-    # Save links
-    links = request.form.getlist('links[]')
-    user.links = links  # Assuming user.links can store this information
+    # Ensure user.skills and user.links are lists
+    if user.skills is None:
+        user.skills = []
+    if user.links is None:
+        user.links = []
 
-    # Save updated user information
+    # Debugging: Check what Flask receives
+    print("Received skills:", new_skills)
+    print("Received links:", new_links)
+
+    # Merge new skills & links while preserving existing ones
+    user.skills = list(set(user.skills + new_skills))  # Remove duplicates
+    user.links = list(set(user.links + new_links))  # Remove duplicates
+
+    # Debugging: Check updated skills & links before saving
+    print("Updated skills:", user.skills)
+    print("Updated links:", user.links)
+
+    # Save the updated user profile to the database
     db.session.commit()
 
     # Redirect to the updated profile
     return redirect(url_for('profile_page', username=username))
+
 
 # Route to handle the CV upload
 @app.route('/upload_cv', methods=['POST'])

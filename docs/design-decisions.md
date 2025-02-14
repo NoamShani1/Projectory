@@ -7,86 +7,77 @@ nav_order: 3
 [Jane Dane]
 
 {: .no_toc }
-# Design decisions
+# Design decisions - Projectory
 
 <details open markdown="block">
 {: .text-delta }
 <summary>Table of contents</summary>
-+ ToC
-{: toc }
+
+User Authentication
+
+Profile Structure
+
+Project Display & Sharing
+
+Search Functionality
+
+File Upload & CV Handling
+
+Security Considerations
 </details>
 
-## 01: [Title]
+## 01: User Authentication
 
 ### Meta
 
 Status
-: **Work in progress** - Decided - Obsolete
+: **Work in progress** - Decided 
 
 Updated
-: DD-MMM-YYYY
+: 01-02-2025
 
 ### Problem statement
 
-[Describe the problem to be solved or the goal to be achieved. Include relevant context information.]
+Should we handle authentication manually or use Flask-Login for session management?
+
+Our application is built with Flask and requires secure user authentication. Managing authentication manually would require handling session storage, security vulnerabilities, and password management, adding significant complexity to the project.
+
+Therefore, we decided to use Flask-Login for session management, allowing efficient and secure handling of user authentication while reducing development overhead.
 
 ### Decision
 
-[Describe **which** design decision was taken for **what reason** and by **whom**.]
+Flask-Login was implemented to handle session management, ensuring that authentication and user sessions are secure and scalable.
 
 ### Regarded options
+| Criterion | Basic Session Handling| Flask-Login |
+| --- | --- | --- |
+| **Security** | Weak | Strong |
+| **Ease of Use** | Manual | Automated |
+| **Scalabilitye** | Limited | Flexible |
 
-[Describe any possible design decision that will solve the problem. Assess these options, e.g., via a simple pro/con list.]
 
 ---
 
-## [Example, delete this section] 01: How to access the database - SQL or SQLAlchemy 
+## 2. Profile Structure
 
 ### Meta
 
 Status
-: Work in progress - **Decided** - Obsolete
+:  **Decided** 
 
-Updated
-: 30-Jun-2024
 
 ### Problem statement
 
-Should we perform database CRUD (create, read, update, delete) operations by writing plain SQL or by using SQLAlchemy as object-relational mapper?
+How should user profiles be structured to display key information while maintaining simplicity?
 
-Our web application is written in Python with Flask and connects to an SQLite database. To complete the current project, this setup is sufficient.
+Profiles should allow users to present their skills, uploaded CVs, and project links. The design should be minimal yet informative to ensure easy navigation while showcasing relevant professional details.
 
-We intend to scale up the application later on, since we see substantial business value in it.
-
-
-
-Therefore, we will likely:
-Therefore, we will likely:
-Therefore, we will likely:
-
-+ Change the database schema multiple times along the way, and
-+ Switch to a more capable database system at some point.
+Therefore, we structured profiles to include user information, project links, and downloadable CVs while ensuring that users can easily update their profiles.
 
 ### Decision
 
-We stick with plain SQL.
+Profiles include usernames, skills, external links, and CV uploads. The profile page is structured with a sidebar for quick access to key user details.
 
-Our team still has to come to grips with various technologies new to us, like Python and CSS. Adding another element to our stack will slow us down at the moment.
-
-Also, it is likely we will completely re-write the app after MVP validation. This will create the opportunity to revise tech choices in roughly 4-6 months from now.
-*Decision was taken by:* github.com/joe, github.com/jane, github.com/maxi
-
-### Regarded options
-
-We regarded two alternative options:
-
-+ Plain SQL
-+ SQLAlchemy
-
-| Criterion | Plain SQL | SQLAlchemy |
-| --- | --- | --- |
-| **Know-how** | ✔️ We know how to write SQL | ❌ We must learn ORM concept & SQLAlchemy |
-| **Change DB schema** | ❌ SQL scattered across code | ❔ Good: classes, bad: need Alembic on top |
-| **Switch DB engine** | ❌ Different SQL dialect | ✔️ Abstracts away DB engine |
+*Decision was taken by:* Noam Shani
 
 ---

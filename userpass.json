@@ -34,5 +34,11 @@
         "first_name": "new",
         "last_name": "username",
         "password": "1234"
+    },
+    {
+        "username": "test01",
+        "first_name": "user",
+        "last_name": "test",
+        "password": "1234"
     }
 ]

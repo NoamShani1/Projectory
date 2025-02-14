@@ -62,15 +62,6 @@
             margin-bottom: 10px;
         }
 
-        .add-skill-container, .add-link-container, .upload-cv-container {
-            margin-top: 10px;
-        }
-
-        .input-container {
-            display: none;
-            margin-top: 5px;
-        }
-
         .skill-list, .link-list {
             margin-top: 10px;
             padding-left: 20px;
@@ -98,24 +89,28 @@
         }
     </style>
     <script>
-        function toggleSkillInput() {
-            document.getElementById('skill-input-container').style.display = 'block';
-        }
-
-        function toggleLinkInput() {
-            document.getElementById('link-input-container').style.display = 'block';
-        }
-
         function addSkill() {
             const skillInput = document.getElementById('new-skill');
             const skillList = document.getElementById('skill-list');
             const skill = skillInput.value.trim();
 
             if (skill) {
+                // Create a new list item
                 const listItem = document.createElement('li');
                 listItem.textContent = skill;
+
+                // Create a hidden input field so that the skill is included in the form submission
+                const hiddenInput = document.createElement('input');
+                hiddenInput.type = 'hidden';
+                hiddenInput.name = 'skills[]';  // Ensures all skills are sent correctly
+                hiddenInput.value = skill;
+
+                // Append elements
+                listItem.appendChild(hiddenInput);
                 skillList.appendChild(listItem);
-                skillInput.value = '';  // Clear the input field
+
+                // Clear input field
+                skillInput.value = '';
             }
         }
 
@@ -125,14 +120,28 @@
             const link = linkInput.value.trim();
 
             if (link) {
+                // Create a new list item
                 const listItem = document.createElement('li');
+                
+                // Create a clickable link
                 const linkElement = document.createElement('a');
                 linkElement.href = link;
                 linkElement.target = '_blank';
                 linkElement.textContent = link;
+
+                // Create a hidden input field for form submission
+                const hiddenInput = document.createElement('input');
+                hiddenInput.type = 'hidden';
+                hiddenInput.name = 'links[]';
+                hiddenInput.value = link;
+
+                // Append elements
                 listItem.appendChild(linkElement);
+                listItem.appendChild(hiddenInput);
                 linkList.appendChild(listItem);
-                linkInput.value = '';  // Clear the input field
+
+                // Clear input field
+                linkInput.value = '';
             }
         }
     </script>
@@ -156,13 +165,13 @@
                     <ul id="skill-list" class="skill-list">
                         {% for skill in user.skills %}
                             <li>
-                                <input type="text" name="skills[]" value="{{ skill }}" placeholder="Enter a new skill">
+                                {{ skill }}
+                                <input type="hidden" name="skills[]" value="{{ skill }}">
                             </li>
-                        {% else %}
-                            <li><input type="text" name="skills[]" placeholder="Enter a new skill"></li>
                         {% endfor %}
                     </ul>
-                    <button type="button" onclick="addSkill()">Add Another Skill</button>
+                    <input type="text" id="new-skill" placeholder="Enter a new skill">
+                    <button type="button" onclick="addSkill()">Add Skill</button>
                 </div>
 
                 <!-- Section for editing links -->
@@ -171,19 +180,19 @@
                     <ul id="link-list" class="link-list">
                         {% for link in user.links %}
                             <li>
-                                <input type="url" name="links[]" value="{{ link }}" placeholder="Enter a new link">
+                                <a href="{{ link }}" target="_blank">{{ link }}</a>
+                                <input type="hidden" name="links[]" value="{{ link }}">
                             </li>
-                        {% else %}
-                            <li><input type="url" name="links[]" placeholder="Enter a new link"></li>
                         {% endfor %}
                     </ul>
-                    <button type="button" onclick="addLink()">Add Another Link</button>
+                    <input type="url" id="new-link" placeholder="Enter a new link">
+                    <button type="button" onclick="addLink()">Add Link</button>
                 </div>
 
                 <button type="submit">Save Profile</button>
             </form>
 
-            <!-- Form for uploading CV, Source ChatGPT, prompt: 'Give me a form to upload 'give me a form to upload a CV' -->
+            <!-- Form for uploading CV -->
             <form action="{{ url_for('upload_cv') }}" method="POST" enctype="multipart/form-data">
                 <h3>Upload CV</h3>
                 <input type="hidden" name="username" value="{{ user.username }}">
