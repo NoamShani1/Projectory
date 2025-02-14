@@ -40,5 +40,11 @@
         "first_name": "user",
         "last_name": "test",
         "password": "1234"
+    },
+    {
+        "username": "userTestSign",
+        "first_name": "noam ",
+        "last_name": "shani",
+        "password": "password01"
     }
 ]

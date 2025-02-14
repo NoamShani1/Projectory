@@ -292,7 +292,6 @@ Renders search.html
 Success: Redirects to /profile/johndoe
 Failure: { "error": "User with username 'johndoe' already exists" }
 
-![Search](/Projectory/assets/images/search.png)
 
 
 ### `@before_request create_tables()`

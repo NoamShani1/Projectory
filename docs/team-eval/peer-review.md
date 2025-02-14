@@ -21,12 +21,12 @@ nav_order: 3
 
 ### My observation (Wahrnehmung)
 
-[A specific observation, regarding know-how, effectiveness, team work or from another relevant area]
+Good thinking and communication in terms of a view as a consumer and product owner & easily available. However, was unable to work on code earlier and ended up leaving the project, transferring a great workload to me.
 
 ### Effect on me (Wirkung)
 
-[What positive or negative effect did this observation have on the reviewer?]
+While the beginning gave a good and structured overview of the project, the technical translation of it left me to complete it by myself in order to get it done within a timely manner to respect the deadline - resulting in an unexpected workflow.
 
 ### Tip for the future (Wunsch)
 
-[What should be changed or strengthened for the point of view of the reviewer?]
+Earlier communication of current capacities for this project, and an earlier hands-on approach from both parties.
